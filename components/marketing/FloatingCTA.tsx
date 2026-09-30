@@ -65,7 +65,7 @@ export default function FloatingCTA({ cohort }: FloatingCTAProps) {
       </div>
 
       <Link
-        href="/courses"
+        href="/#cohort"
         style={{
           display: "inline-flex",
           alignItems: "center",

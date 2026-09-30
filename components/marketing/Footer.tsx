@@ -21,10 +21,10 @@ export default function Footer() {
       { label: "My Certificates", href: "/certificates" },
     ],
     Legal: [
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Terms of Service", href: "/terms" },
-      { label: "Refund Policy", href: "/refund-policy" },
-      { label: "Contact Us", href: "/contact" },
+      { label: "Privacy Policy", href: "#privacy" },
+      { label: "Terms of Service", href: "#terms" },
+      { label: "Refund Policy", href: "#refund-policy" },
+      { label: "Contact Us", href: "mailto:neeraj.4all.kr@gmail.com" },
     ],
   };
 
@@ -83,24 +83,46 @@ export default function Footer() {
             {/* Contact */}
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1.5rem" }}>
               <a
-                href="mailto:support@procareerlabs.com"
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "#64748b", fontSize: "0.875rem", textDecoration: "none" }}
+                href="mailto:neeraj.4all.kr@gmail.com"
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "#94a3b8", fontSize: "0.875rem", textDecoration: "none", transition: "color 0.2s" }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#1e6fff")}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "#94a3b8")}
               >
-                <Mail size={14} /> support@procareerlabs.com
+                <Mail size={14} color="#1e6fff" /> neeraj.4all.kr@gmail.com
               </a>
             </div>
 
             {/* Social */}
             <div style={{ display: "flex", gap: "0.75rem" }}>
               {[
-                { label: "LinkedIn", icon: <Globe size={16} />, href: "https://linkedin.com" },
-                { label: "Community", icon: <MessageSquare size={16} />, href: "#" },
-                { label: "Share", icon: <Share2 size={16} />, href: "#" },
+                { label: "LinkedIn", icon: <Globe size={16} />, href: "https://www.linkedin.com" },
+                { label: "Community", icon: <MessageSquare size={16} />, href: "https://chat.whatsapp.com" },
+                {
+                  label: "Share",
+                  icon: <Share2 size={16} />,
+                  href: "#share",
+                  onClick: (e: React.MouseEvent) => {
+                    e.preventDefault();
+                    if (typeof navigator !== "undefined" && navigator.share) {
+                      navigator.share({
+                        title: "ProCareerLabs | AI-Powered Learning",
+                        text: "Transform your career with high-income AI & LinkedIn skills at ProCareerLabs!",
+                        url: window.location.origin,
+                      }).catch(() => {});
+                    } else if (typeof window !== "undefined") {
+                      navigator.clipboard?.writeText(window.location.origin);
+                      alert("Link copied to clipboard!");
+                    }
+                  },
+                },
               ].map((social, i) => (
                 <a
                   key={i}
                   href={social.href}
+                  onClick={social.onClick}
                   title={social.label}
+                  target={social.href.startsWith("http") ? "_blank" : undefined}
+                  rel={social.href.startsWith("http") ? "noopener noreferrer" : undefined}
                   style={{
                     width: 36,
                     height: 36,
@@ -112,6 +134,7 @@ export default function Footer() {
                     justifyContent: "center",
                     color: "#64748b",
                     textDecoration: "none",
+                    cursor: "pointer",
                     transition: "all 0.2s",
                   }}
                   onMouseEnter={(e) => {

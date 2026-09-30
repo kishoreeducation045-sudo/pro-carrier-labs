@@ -131,7 +131,7 @@ export async function sendEnrollmentConfirmationEmail({
             </div>
           </div>
           <div style="border-top: 1px solid rgba(255,255,255,0.08); padding: 20px; text-align: center; color: #64748b; font-size: 12px;">
-            Need help? Contact support@procareerlabs.com
+            Need help? Contact neeraj.4all.kr@gmail.com
           </div>
         </div>
       `,

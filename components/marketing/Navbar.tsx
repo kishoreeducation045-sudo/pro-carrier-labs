@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { isAdminEmail } from "@/lib/utils";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -138,36 +139,31 @@ export default function Navbar() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           {user ? (
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <Link
-                href={
+              {(() => {
+                const isAdmin =
                   user.role === "super_admin" ||
                   user.role === "admin" ||
-                  user.email === "admin@procareerlabs.com"
-                    ? "/admin"
-                    : "/dashboard"
-                }
-                style={{
-                  background:
-                    user.role === "super_admin" ||
-                    user.role === "admin" ||
-                    user.email === "admin@procareerlabs.com"
-                      ? "linear-gradient(135deg, #1e6fff, #f5a623)"
-                      : "#1e6fff",
-                  color: "#fff",
-                  fontWeight: 700,
-                  fontSize: "0.875rem",
-                  padding: "0.5rem 1.25rem",
-                  borderRadius: 9999,
-                  textDecoration: "none",
-                  transition: "all 0.2s",
-                }}
-              >
-                {user.role === "super_admin" ||
-                user.role === "admin" ||
-                user.email === "admin@procareerlabs.com"
-                  ? "👑 Admin Console"
-                  : "🎓 Dashboard"}
-              </Link>
+                  isAdminEmail(user.email);
+                return (
+                  <Link
+                    href={isAdmin ? "/admin" : "/dashboard"}
+                    style={{
+                      background: isAdmin
+                        ? "linear-gradient(135deg, #1e6fff, #f5a623)"
+                        : "#1e6fff",
+                      color: "#fff",
+                      fontWeight: 700,
+                      fontSize: "0.875rem",
+                      padding: "0.5rem 1.25rem",
+                      borderRadius: 9999,
+                      textDecoration: "none",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    {isAdmin ? "👑 Admin Console" : "🎓 Dashboard"}
+                  </Link>
+                );
+              })()}
               <button
                 onClick={async () => {
                   try {
