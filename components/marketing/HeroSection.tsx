@@ -2,7 +2,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { ArrowRight, Play, Calendar, Clock, Users } from "lucide-react";
+import { ArrowRight, Calendar, Clock, Users } from "lucide-react";
+import { formatGoogleDriveUrl } from "@/lib/utils";
+
+interface HeroContent {
+  headline?: string;
+  subheadline?: string;
+  badgeText?: string;
+  ctaText?: string;
+  ratingValue?: string;
+  ratingLabel?: string;
+  studentsCount?: string;
+  studentsLabel?: string;
+  imageUrl?: string;
+}
 
 interface HeroSectionProps {
   cohort?: {
@@ -13,9 +26,10 @@ interface HeroSectionProps {
     price_inr: number;
     original_price_inr: number;
   } | null;
+  heroContent?: HeroContent | null;
 }
 
-export default function HeroSection({ cohort }: HeroSectionProps) {
+export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,6 +49,7 @@ export default function HeroSection({ cohort }: HeroSectionProps) {
     return () => observer.disconnect();
   }, []);
 
+  // ── Dynamic values with fallbacks ──
   const cohortDate = cohort
     ? new Date(cohort.cohort_date).toLocaleDateString("en-IN", {
         day: "2-digit",
@@ -50,13 +65,25 @@ export default function HeroSection({ cohort }: HeroSectionProps) {
       })
     : "7:00 PM";
 
-  const seatsLeft = cohort
-    ? cohort.max_seats - cohort.seats_taken
-    : 48;
-
+  const seatsLeft = cohort ? cohort.max_seats - cohort.seats_taken : 48;
   const price = cohort?.price_inr ?? 299;
   const originalPrice = cohort?.original_price_inr ?? 2999;
   const discount = Math.round(((originalPrice - price) / originalPrice) * 100);
+
+  // Hero copy — admin-set with sensible defaults
+  const badgeText = heroContent?.badgeText || `Live Cohort • ${cohortDate}`;
+  const ctaText = heroContent?.ctaText || "YES! Reserve My Spot";
+  const ratingValue = heroContent?.ratingValue || "4.9";
+  const ratingLabel = heroContent?.ratingLabel || "Avg Rating";
+  const studentsCount = heroContent?.studentsCount || "12K+";
+  const studentsLabel = heroContent?.studentsLabel || "Professionals Trained";
+
+  // Determine hero image
+  const rawImageUrl = heroContent?.imageUrl;
+  const heroImageSrc = rawImageUrl ? formatGoogleDriveUrl(rawImageUrl) : null;
+  const isGoogleDriveImage = rawImageUrl
+    ? rawImageUrl.includes("drive.google.com") || rawImageUrl.includes("lh3.googleusercontent.com")
+    : false;
 
   return (
     <section
@@ -139,7 +166,7 @@ export default function HeroSection({ cohort }: HeroSectionProps) {
                   display: "inline-block",
                 }}
               />
-              Live Cohort • {cohortDate}
+              {badgeText}
             </span>
           </div>
 
@@ -156,28 +183,34 @@ export default function HeroSection({ cohort }: HeroSectionProps) {
               transitionDelay: "120ms",
             }}
           >
-            How Working Professionals Are Using{" "}
-            <span
-              style={{
-                background: "linear-gradient(135deg, #1e6fff, #60a5fa)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              AI to Earn
-            </span>{" "}
-            <span
-              style={{
-                background: "linear-gradient(135deg, #f5a623, #fbbf24)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              ₹50K–₹1L Extra
-            </span>{" "}
-            Every Month
+            {heroContent?.headline ? (
+              heroContent.headline
+            ) : (
+              <>
+                How Working Professionals Are Using{" "}
+                <span
+                  style={{
+                    background: "linear-gradient(135deg, #1e6fff, #60a5fa)",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  AI to Earn
+                </span>{" "}
+                <span
+                  style={{
+                    background: "linear-gradient(135deg, #f5a623, #fbbf24)",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  ₹50K–₹1L Extra
+                </span>{" "}
+                Every Month
+              </>
+            )}
           </h1>
 
           {/* Subheadline */}
@@ -191,7 +224,7 @@ export default function HeroSection({ cohort }: HeroSectionProps) {
               lineHeight: 1.7,
             }}
           >
-            Without quitting their job or knowing how to code.
+            {heroContent?.subheadline || "Without quitting their job or knowing how to code."}
           </p>
 
           {/* Session info card */}
@@ -262,18 +295,12 @@ export default function HeroSection({ cohort }: HeroSectionProps) {
                 transition: "all 0.2s",
               }}
             >
-              YES! Reserve My Spot — ₹{price}
+              {ctaText} — ₹{price}
               <ArrowRight size={18} />
             </Link>
 
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span
-                style={{
-                  fontSize: "0.875rem",
-                  color: "#64748b",
-                  textDecoration: "line-through",
-                }}
-              >
+              <span style={{ fontSize: "0.875rem", color: "#64748b", textDecoration: "line-through" }}>
                 ₹{originalPrice}
               </span>
               <span
@@ -295,24 +322,16 @@ export default function HeroSection({ cohort }: HeroSectionProps) {
           {/* Trust signals */}
           <p
             className="reveal"
-            style={{
-              fontSize: "0.8125rem",
-              color: "#64748b",
-              margin: 0,
-              transitionDelay: "600ms",
-            }}
+            style={{ fontSize: "0.8125rem", color: "#64748b", margin: 0, transitionDelay: "600ms" }}
           >
             🔒 Secure checkout · UPI, Cards, Netbanking
           </p>
         </div>
 
-        {/* Right: Instructor image */}
+        {/* Right: Instructor / Hero image */}
         <div
           className="reveal"
-          style={{
-            position: "relative",
-            transitionDelay: "200ms",
-          }}
+          style={{ position: "relative", transitionDelay: "200ms" }}
         >
           <div
             style={{
@@ -323,18 +342,33 @@ export default function HeroSection({ cohort }: HeroSectionProps) {
               boxShadow: "0 32px 64px rgba(0,0,0,0.5), 0 0 60px rgba(30,111,255,0.15)",
             }}
           >
-            <Image
-              src="/neeraj-linkedin.jpg"
-              alt="Neeraj Kumar - LinkedIn Influencer & AI Trainer"
-              width={600}
-              height={700}
-              style={{
-                width: "100%",
-                height: "auto",
-                display: "block",
-              }}
-              priority
-            />
+            {heroImageSrc && isGoogleDriveImage ? (
+              // Use regular <img> for Google Drive (avoids next/image domain config complexity)
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={heroImageSrc}
+                alt="Pro Career Labs Hero"
+                style={{ width: "100%", height: "auto", display: "block", maxHeight: 700, objectFit: "cover" }}
+              />
+            ) : heroImageSrc ? (
+              <Image
+                src={heroImageSrc}
+                alt="Pro Career Labs Hero"
+                width={600}
+                height={700}
+                style={{ width: "100%", height: "auto", display: "block" }}
+                priority
+              />
+            ) : (
+              <Image
+                src="/neeraj-linkedin.jpg"
+                alt="Neeraj Kumar - LinkedIn Influencer & AI Trainer"
+                width={600}
+                height={700}
+                style={{ width: "100%", height: "auto", display: "block" }}
+                priority
+              />
+            )}
             {/* Overlay gradient at bottom */}
             <div
               style={{
@@ -348,7 +382,7 @@ export default function HeroSection({ cohort }: HeroSectionProps) {
             />
           </div>
 
-          {/* Floating stats badge */}
+          {/* Floating students badge */}
           <div
             style={{
               position: "absolute",
@@ -363,11 +397,9 @@ export default function HeroSection({ cohort }: HeroSectionProps) {
             }}
           >
             <p style={{ color: "#f5a623", fontWeight: 800, fontSize: "1.5rem", margin: 0 }}>
-              12K+
+              {studentsCount}
             </p>
-            <p style={{ color: "#94a3b8", fontSize: "0.75rem", margin: 0 }}>
-              Professionals Trained
-            </p>
+            <p style={{ color: "#94a3b8", fontSize: "0.75rem", margin: 0 }}>{studentsLabel}</p>
           </div>
 
           {/* Floating rating badge */}
@@ -385,11 +417,9 @@ export default function HeroSection({ cohort }: HeroSectionProps) {
             }}
           >
             <p style={{ color: "#fbbf24", fontWeight: 800, fontSize: "1.25rem", margin: 0 }}>
-              ⭐ 4.9
+              ⭐ {ratingValue}
             </p>
-            <p style={{ color: "#94a3b8", fontSize: "0.75rem", margin: 0 }}>
-              Avg Rating
-            </p>
+            <p style={{ color: "#94a3b8", fontSize: "0.75rem", margin: 0 }}>{ratingLabel}</p>
           </div>
         </div>
       </div>

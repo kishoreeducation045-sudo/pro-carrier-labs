@@ -62,11 +62,12 @@ export async function POST(request: NextRequest) {
       zoom_link,
       is_active,
       show_countdown,
+      siteSettings, // hero copy, image, stats
     } = body;
 
-    let result;
+    // ── 1. Upsert cohort_settings ──
+    let cohortResult;
     if (id) {
-      // Update existing cohort
       const { data, error } = await adminSupabase
         .from("cohort_settings")
         .update({
@@ -90,15 +91,16 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (error) throw error;
-      result = data;
+      cohortResult = data;
     } else {
-      // Insert new active cohort
       const { data, error } = await adminSupabase
         .from("cohort_settings")
         .insert({
           title: title || "AI Masterclass with Neeraj Kumar",
           headline: headline || "Build, Automate & Scale with Generative AI in 3 Hours",
-          subheadline: subheadline || "Join 12,000+ professionals mastering prompt engineering & autonomous agents.",
+          subheadline:
+            subheadline ||
+            "Join 12,000+ professionals mastering prompt engineering & autonomous agents.",
           cohort_date: cohort_date || new Date(Date.now() + 3 * 86400000).toISOString(),
           duration_hours: Number(duration_hours) || 3,
           max_seats: Number(max_seats) || 100,
@@ -114,12 +116,40 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (error) throw error;
-      result = data;
+      cohortResult = data;
     }
 
-    return NextResponse.json({ success: true, cohort: result });
+    // ── 2. Upsert site_settings for hero + stats ──
+    if (siteSettings && typeof siteSettings === "object") {
+      const upsertRows = Object.entries(siteSettings).map(([key, value]) => ({
+        key,
+        value: value ?? "",
+        updated_at: new Date().toISOString(),
+      }));
+
+      if (upsertRows.length > 0) {
+        const { error: settingsError } = await adminSupabase
+          .from("site_settings")
+          .upsert(upsertRows, { onConflict: "key" });
+
+        if (settingsError) {
+          console.error("site_settings upsert error:", settingsError);
+          // Non-fatal — cohort update succeeded; report partial success
+          return NextResponse.json({
+            success: true,
+            cohort: cohortResult,
+            warning: "Cohort saved but site settings update failed: " + settingsError.message,
+          });
+        }
+      }
+    }
+
+    return NextResponse.json({ success: true, cohort: cohortResult });
   } catch (error: any) {
     console.error("Error saving cohort settings:", error);
-    return NextResponse.json({ error: error.message || "Failed to update cohort" }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message || "Failed to update cohort" },
+      { status: 500 }
+    );
   }
 }

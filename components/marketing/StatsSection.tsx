@@ -2,23 +2,28 @@
 import { useEffect, useRef, useState } from "react";
 import { Trophy, Users, TrendingUp, Clock } from "lucide-react";
 
-interface StatsSectionProps {
-  stats?: {
-    students: string;
-    workshops: string;
-    rating: string;
-    revenue: string;
-  };
+interface Stat {
+  value: string;
+  label: string;
 }
 
-const DEFAULT_STATS = {
-  students: "12000",
-  workshops: "150",
-  rating: "4.9",
-  revenue: "2.4 Cr+",
-};
+interface StatsSectionProps {
+  stat1?: Partial<Stat>;
+  stat2?: Partial<Stat>;
+  stat3?: Partial<Stat>;
+  stat4?: Partial<Stat>;
+}
 
-function AnimatedStat({ value, label, icon, suffix = "", prefix = "" }: any) {
+const DEFAULTS: Stat[] = [
+  { value: "12K+", label: "Professionals Trained Across India" },
+  { value: "150+", label: "Corporate AI Workshops Delivered" },
+  { value: "4.9★", label: "Average Rating from Students" },
+  { value: "10 hrs / wk", label: "Avg Time Saved After Class" },
+];
+
+const ICONS = [<Users size={22} />, <Trophy size={22} />, <TrendingUp size={22} />, <Clock size={22} />];
+
+function AnimatedStat({ value, label, icon }: { value: string; label: string; icon: React.ReactNode }) {
   const [display, setDisplay] = useState("0");
   const ref = useRef<HTMLDivElement>(null);
   const animated = useRef(false);
@@ -29,8 +34,11 @@ function AnimatedStat({ value, label, icon, suffix = "", prefix = "" }: any) {
         if (entry.isIntersecting && !animated.current) {
           animated.current = true;
           const numValue = parseFloat(value.replace(/[^0-9.]/g, ""));
-          const suffix = value.replace(/[0-9.,]/g, "");
-          if (isNaN(numValue)) { setDisplay(value); return; }
+          const suffix = value.replace(/[0-9.,\s]/g, "");
+          if (isNaN(numValue)) {
+            setDisplay(value);
+            return;
+          }
           let start = 0;
           const steps = 60;
           const increment = numValue / steps;
@@ -40,8 +48,11 @@ function AnimatedStat({ value, label, icon, suffix = "", prefix = "" }: any) {
               setDisplay(value);
               clearInterval(timer);
             } else {
-              const formatted = numValue > 999 ? (start / 1000).toFixed(1) + "K" : Math.floor(start).toString();
-              setDisplay(formatted + (numValue > 999 ? "" : suffix));
+              const formatted =
+                numValue > 999
+                  ? (start / 1000).toFixed(1) + "K"
+                  : Math.floor(start).toString();
+              setDisplay(formatted + (numValue > 999 ? "+" : suffix));
             }
           }, 25);
         }
@@ -98,16 +109,18 @@ function AnimatedStat({ value, label, icon, suffix = "", prefix = "" }: any) {
           letterSpacing: "-0.02em",
         }}
       >
-        {prefix}{display}
+        {display}
       </p>
       <p style={{ color: "#94a3b8", fontSize: "0.875rem", margin: 0 }}>{label}</p>
     </div>
   );
 }
 
-export default function StatsSection({ stats = DEFAULT_STATS }: StatsSectionProps) {
-  const numStudents = parseInt(stats.students);
-  const displayStudents = numStudents >= 1000 ? (numStudents / 1000).toFixed(0) + "K+" : stats.students + "+";
+export default function StatsSection({ stat1, stat2, stat3, stat4 }: StatsSectionProps) {
+  const stats = [stat1, stat2, stat3, stat4].map((s, i) => ({
+    value: s?.value || DEFAULTS[i].value,
+    label: s?.label || DEFAULTS[i].label,
+  }));
 
   return (
     <section style={{ padding: "5rem 1.5rem" }}>
@@ -119,26 +132,9 @@ export default function StatsSection({ stats = DEFAULT_STATS }: StatsSectionProp
             gap: "1.5rem",
           }}
         >
-          <AnimatedStat
-            value={displayStudents}
-            label="Professionals Trained Across India"
-            icon={<Users size={22} />}
-          />
-          <AnimatedStat
-            value={stats.workshops + "+"}
-            label="Corporate AI Workshops Delivered"
-            icon={<Trophy size={22} />}
-          />
-          <AnimatedStat
-            value={stats.rating + "★"}
-            label="Average Rating from Students"
-            icon={<TrendingUp size={22} />}
-          />
-          <AnimatedStat
-            value="10 hrs / wk"
-            label="Avg Time Saved After Class"
-            icon={<Clock size={22} />}
-          />
+          {stats.map((stat, i) => (
+            <AnimatedStat key={i} value={stat.value} label={stat.label} icon={ICONS[i]} />
+          ))}
         </div>
       </div>
     </section>

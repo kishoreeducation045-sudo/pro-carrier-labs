@@ -29,7 +29,7 @@ async function getHomeData() {
       .limit(1)
       .single();
 
-    // Site settings (stats, ticker)
+    // Site settings (stats, ticker, hero content)
     const { data: settings } = await supabase
       .from("site_settings")
       .select("key, value");
@@ -63,12 +63,24 @@ export default async function HomePage() {
     tickerItems = undefined;
   }
 
-  const stats = {
-    students: settingsMap.stat_students ?? "12000",
-    workshops: settingsMap.stat_workshops ?? "150",
-    rating: settingsMap.stat_rating ?? "4.9",
-    revenue: settingsMap.stat_revenue ?? "2.4 Cr+",
+  // Hero content from admin (all optional — empty strings fall through to defaults)
+  const heroContent = {
+    headline: settingsMap.hero_headline || "",
+    subheadline: settingsMap.hero_subheadline || "",
+    badgeText: settingsMap.hero_badge_text || "",
+    ctaText: settingsMap.hero_cta_text || "",
+    ratingValue: settingsMap.hero_rating_value || "4.9",
+    ratingLabel: settingsMap.hero_rating_label || "Avg Rating",
+    studentsCount: settingsMap.hero_students_count || "12K+",
+    studentsLabel: settingsMap.hero_students_label || "Professionals Trained",
+    imageUrl: settingsMap.hero_image_url || "",
   };
+
+  // Stats from admin
+  const stat1 = { value: settingsMap.stat1_value, label: settingsMap.stat1_label };
+  const stat2 = { value: settingsMap.stat2_value, label: settingsMap.stat2_label };
+  const stat3 = { value: settingsMap.stat3_value, label: settingsMap.stat3_label };
+  const stat4 = { value: settingsMap.stat4_value, label: settingsMap.stat4_label };
 
   return (
     <main style={{ background: "#0a0f1e", minHeight: "100vh" }}>
@@ -77,10 +89,10 @@ export default async function HomePage() {
       <Navbar />
 
       {/* Hero */}
-      <HeroSection cohort={cohort} />
+      <HeroSection cohort={cohort} heroContent={heroContent} />
 
       {/* Social Proof Stats */}
-      <StatsSection stats={stats} />
+      <StatsSection stat1={stat1} stat2={stat2} stat3={stat3} stat4={stat4} />
 
       <div className="section-divider" />
 
