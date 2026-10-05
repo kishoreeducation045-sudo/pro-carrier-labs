@@ -1,5 +1,4 @@
 "use client";
-import { Gift } from "lucide-react";
 
 const BONUSES = [
   {
@@ -34,6 +33,7 @@ export default function BonusStack() {
 
   return (
     <section
+      id="bonuses"
       style={{
         padding: "5rem 1.5rem",
         background: "linear-gradient(180deg, #0d1526 0%, #0a0f1e 100%)",
@@ -99,31 +99,40 @@ export default function BonusStack() {
                 transition: "all 0.2s",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(245,166,35,0.25)";
-                (e.currentTarget as HTMLElement).style.background = "rgba(245,166,35,0.04)";
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(30,111,255,0.3)";
+                (e.currentTarget as HTMLElement).style.background = "rgba(30,111,255,0.05)";
               }}
               onMouseLeave={(e) => {
                 (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)";
                 (e.currentTarget as HTMLElement).style.background = "rgba(17,24,39,0.8)";
               }}
             >
-              {/* Icon */}
+              {/* Icon with dark background */}
               <div
                 style={{
-                  width: 44,
-                  height: 44,
+                  width: 48,
+                  height: 48,
                   flexShrink: 0,
-                  background: "rgba(245,166,35,0.1)",
-                  border: "1px solid rgba(245,166,35,0.2)",
+                  background: "rgba(10, 15, 30, 0.95)",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
                   borderRadius: 12,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#f5a623",
-                  fontSize: "1.25rem",
+                  boxShadow: "inset 0 1px 1px rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.3)",
+                  overflow: "hidden",
                 }}
               >
-                🎁
+                <img
+                  src="/bluegiftbox.png"
+                  alt="Bonus Gift Icon"
+                  style={{
+                    width: 34,
+                    height: 34,
+                    objectFit: "contain",
+                    display: "block",
+                  }}
+                />
               </div>
 
               <div style={{ flex: 1 }}>

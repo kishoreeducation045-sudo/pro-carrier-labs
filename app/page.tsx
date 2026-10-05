@@ -5,9 +5,8 @@ import HeroSection from "@/components/marketing/HeroSection";
 import FeaturedCohort from "@/components/marketing/FeaturedCohort";
 import StatsSection from "@/components/marketing/StatsSection";
 import PainPoints from "@/components/marketing/PainPoints";
-import HowItWorks from "@/components/marketing/HowItWorks";
-import CourseCatalog from "@/components/marketing/CourseCatalog";
 import BonusStack from "@/components/marketing/BonusStack";
+import CourseCatalog from "@/components/marketing/CourseCatalog";
 import InstructorSection from "@/components/marketing/InstructorSection";
 import FAQSection from "@/components/marketing/FAQSection";
 import Footer from "@/components/marketing/Footer";
@@ -106,18 +105,13 @@ export default async function HomePage() {
 
       <div className="section-divider" />
 
-      {/* How It Works */}
-      <HowItWorks />
+      {/* Bonus Stack — swapped in place of How It Works */}
+      <BonusStack />
 
       <div className="section-divider" />
 
       {/* Course Catalog */}
       <CourseCatalog courses={courses ?? undefined} />
-
-      <div className="section-divider" />
-
-      {/* Bonus Stack */}
-      <BonusStack />
 
       <div className="section-divider" />
 
