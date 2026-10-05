@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Edit2, Clock, Eye, Save, X, Loader2 } from "lucide-react";
+import { Plus, Edit2, Clock, Eye, Save, X, Loader2, Trash2, AlertTriangle } from "lucide-react";
 
 interface CourseManagerClientProps {
   initialCourses: any[];
@@ -11,9 +11,35 @@ export default function CourseManagerClient({ initialCourses }: CourseManagerCli
   const router = useRouter();
   const [courses, setCourses] = useState(initialCourses);
   const [editingCourse, setEditingCourse] = useState<any | null>(null);
+  const [deletingCourse, setDeletingCourse] = useState<any | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [msg, setMsg] = useState("");
+
+  const handleConfirmDelete = async () => {
+    if (!deletingCourse) return;
+    setDeleting(true);
+    setMsg("");
+
+    try {
+      const res = await fetch(`/api/admin/courses?id=${deletingCourse.id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to delete course");
+
+      setCourses((prev) => prev.filter((c) => c.id !== deletingCourse.id));
+      setMsg(`Course "${deletingCourse.title}" was successfully deleted.`);
+      setDeletingCourse(null);
+      router.refresh();
+    } catch (err: any) {
+      alert(err.message || "Failed to delete course");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const handleEdit = (course: any) => {
     setIsNew(false);
@@ -187,6 +213,33 @@ export default function CourseManagerClient({ initialCourses }: CourseManagerCli
                 >
                   <Edit2 size={14} /> Edit Course
                 </button>
+
+                <button
+                  onClick={() => setDeletingCourse(course)}
+                  title="Delete Course"
+                  style={{
+                    background: "rgba(239, 68, 68, 0.12)",
+                    border: "1px solid rgba(239, 68, 68, 0.3)",
+                    color: "#ef4444",
+                    padding: "0.5rem 0.75rem",
+                    borderRadius: 8,
+                    fontWeight: 600,
+                    fontSize: "0.8125rem",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.375rem",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = "rgba(239, 68, 68, 0.22)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = "rgba(239, 68, 68, 0.12)";
+                  }}
+                >
+                  <Trash2 size={14} /> Delete
+                </button>
               </div>
             </div>
           </div>
@@ -343,6 +396,104 @@ export default function CourseManagerClient({ initialCourses }: CourseManagerCli
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingCourse && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.8)",
+            backdropFilter: "blur(6px)",
+            zIndex: 100,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "1rem",
+          }}
+        >
+          <div
+            style={{
+              background: "#111827",
+              border: "1px solid rgba(239, 68, 68, 0.3)",
+              borderRadius: 20,
+              padding: "2rem",
+              maxWidth: 460,
+              width: "100%",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(239, 68, 68, 0.15)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1rem" }}>
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: "rgba(239, 68, 68, 0.15)",
+                  border: "1px solid rgba(239, 68, 68, 0.3)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#ef4444",
+                }}
+              >
+                <Trash2 size={22} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: "1.25rem", fontWeight: 800, margin: 0, color: "#f9fafb" }}>
+                  Delete Course
+                </h3>
+                <span style={{ fontSize: "0.8125rem", color: "#64748b" }}>Permanent action</span>
+              </div>
+            </div>
+
+            <p style={{ color: "#94a3b8", fontSize: "0.9375rem", lineHeight: 1.6, margin: "0 0 1.5rem" }}>
+              Are you sure you want to permanently delete <strong style={{ color: "#f9fafb" }}>"{deletingCourse.title}"</strong>? This will remove the course and its curriculum from the platform.
+            </p>
+
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
+              <button
+                type="button"
+                onClick={() => setDeletingCourse(null)}
+                disabled={deleting}
+                style={{
+                  background: "rgba(255, 255, 255, 0.06)",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
+                  color: "#cbd5e1",
+                  padding: "0.625rem 1.25rem",
+                  borderRadius: 10,
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  cursor: deleting ? "not-allowed" : "pointer",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={deleting}
+                style={{
+                  background: "#ef4444",
+                  border: "none",
+                  color: "#ffffff",
+                  padding: "0.625rem 1.25rem",
+                  borderRadius: 10,
+                  fontSize: "0.875rem",
+                  fontWeight: 700,
+                  cursor: deleting ? "not-allowed" : "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                Yes, Delete Course
+              </button>
+            </div>
           </div>
         </div>
       )}

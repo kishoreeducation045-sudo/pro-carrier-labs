@@ -111,3 +111,64 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message || "Failed to save course" }, { status: 500 });
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+    const adminSupabase = await createAdminClient();
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Verify admin role
+    const { data: userProfile } = await adminSupabase
+      .from("users")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    const isAdmin = ["admin", "super_admin", "course_admin"].includes(userProfile?.role);
+    if (!isAdmin) {
+      return NextResponse.json({ error: "Forbidden: Admin privileges required" }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    let id = searchParams.get("id");
+
+    if (!id) {
+      try {
+        const body = await request.json();
+        id = body.id;
+      } catch {}
+    }
+
+    if (!id) {
+      return NextResponse.json({ error: "Course ID is required" }, { status: 400 });
+    }
+
+    // Unlink any active cohort settings that point to this course first
+    await adminSupabase
+      .from("cohort_settings")
+      .update({ course_id: null })
+      .eq("course_id", id);
+
+    const { error: deleteError } = await adminSupabase
+      .from("courses")
+      .delete()
+      .eq("id", id);
+
+    if (deleteError) throw deleteError;
+
+    return NextResponse.json({ success: true, message: "Course deleted successfully" });
+  } catch (error: any) {
+    console.error("Error deleting course:", error);
+    return NextResponse.json({ error: error.message || "Failed to delete course" }, { status: 500 });
+  }
+}
+

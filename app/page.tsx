@@ -38,8 +38,7 @@ async function getHomeData() {
       .from("courses")
       .select("id, title, description, price_inr, course_duration_hours, difficulty_level, slug")
       .eq("status", "published")
-      .order("order_index", { ascending: true })
-      .limit(4);
+      .order("order_index", { ascending: true });
 
     const settingsMap = Object.fromEntries(
       (settings ?? []).map((s: any) => [s.key, s.value])
