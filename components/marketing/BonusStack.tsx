@@ -28,8 +28,74 @@ const BONUSES = [
   },
 ];
 
-export default function BonusStack() {
-  const totalValue = BONUSES.reduce((sum, b) => sum + b.value, 0);
+interface BonusItem {
+  title: string;
+  description: string;
+  value: number;
+}
+
+interface BonusStackProps {
+  badge?: string;
+  title?: string;
+  subtitle?: string;
+  bonuses?: BonusItem[];
+}
+
+export default function BonusStack({
+  badge,
+  title,
+  subtitle,
+  bonuses,
+}: BonusStackProps = {}) {
+  const displayBonuses = Array.isArray(bonuses) && bonuses.length > 0 ? bonuses : BONUSES;
+  const displayBadge = badge || "Free Bonuses";
+  const displaySubtitle = subtitle || "Reserve your seat and these are yours — instantly.";
+  const totalValue = displayBonuses.reduce((sum, b) => sum + (Number(b.value) || 0), 0);
+
+  const renderTitle = () => {
+    if (title) {
+      const parts = title.split(/(₹[0-9,kKmM+]+)/g);
+      if (parts.length > 1) {
+        return (
+          <>
+            {parts.map((part, idx) =>
+              part.startsWith("₹") ? (
+                <span
+                  key={idx}
+                  style={{
+                    background: "linear-gradient(135deg, #f5a623, #fbbf24)",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
+                  {part}
+                </span>
+              ) : (
+                part
+              )
+            )}
+          </>
+        );
+      }
+      return title;
+    }
+    return (
+      <>
+        Unlock {displayBonuses.length} Free Bonuses Worth{" "}
+        <span
+          style={{
+            background: "linear-gradient(135deg, #f5a623, #fbbf24)",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          ₹{totalValue.toLocaleString("en-IN")}+
+        </span>
+      </>
+    );
+  };
 
   return (
     <section
@@ -56,7 +122,7 @@ export default function BonusStack() {
               marginBottom: "1rem",
             }}
           >
-            Free Bonuses
+            {displayBadge}
           </span>
           <h2
             style={{
@@ -67,25 +133,15 @@ export default function BonusStack() {
               letterSpacing: "-0.02em",
             }}
           >
-            Unlock 5 Free Bonuses Worth{" "}
-            <span
-              style={{
-                background: "linear-gradient(135deg, #f5a623, #fbbf24)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              ₹{totalValue.toLocaleString("en-IN")}+
-            </span>
+            {renderTitle()}
           </h2>
           <p style={{ color: "#94a3b8", margin: 0 }}>
-            Reserve your seat and these are yours — instantly.
+            {displaySubtitle}
           </p>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          {BONUSES.map((bonus, i) => (
+          {displayBonuses.map((bonus, i) => (
             <div
               key={i}
               style={{

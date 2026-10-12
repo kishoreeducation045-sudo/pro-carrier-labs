@@ -12,6 +12,7 @@ import {
   Zap,
   LogOut,
   ExternalLink,
+  LayoutTemplate,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -34,6 +35,7 @@ export default function AdminSidebar() {
   const navItems = [
     { name: "Analytics Overview", href: "/admin", icon: <LayoutDashboard size={18} /> },
     { name: "Homepage and Cohort", href: "/admin/cohort", icon: <Calendar size={18} />, highlight: true },
+    { name: "Changes in Website", href: "/admin/website-content", icon: <LayoutTemplate size={18} /> },
     { name: "Course Management", href: "/admin/courses", icon: <BookOpen size={18} /> },
     { name: "Students & UTRs", href: "/admin/students", icon: <Users size={18} /> },
     { name: "Site & Ticker Settings", href: "/admin/site-settings", icon: <Sliders size={18} /> },

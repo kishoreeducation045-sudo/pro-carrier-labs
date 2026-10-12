@@ -15,8 +15,25 @@ const PAIN_POINTS = [
   "I want to be more productive at work",
 ];
 
-export default function PainPoints() {
+interface PainPointsProps {
+  badge?: string;
+  title?: string;
+  subtitle?: string;
+  items?: string[];
+}
+
+export default function PainPoints({
+  badge,
+  title,
+  subtitle,
+  items,
+}: PainPointsProps = {}) {
   const [selected, setSelected] = useState<Set<number>>(new Set());
+
+  const displayItems = Array.isArray(items) && items.length > 0 ? items : PAIN_POINTS;
+  const displayBadge = badge || "Does This Sound Like You?";
+  const displayTitle = title || "Click everything that applies to you";
+  const displaySubtitle = subtitle || "Tap the cards below to see how many you relate to.";
 
   const toggle = (i: number) => {
     setSelected((prev) => {
@@ -51,7 +68,7 @@ export default function PainPoints() {
               marginBottom: "1rem",
             }}
           >
-            Does This Sound Like You?
+            {displayBadge}
           </span>
           <h2
             style={{
@@ -62,12 +79,12 @@ export default function PainPoints() {
               letterSpacing: "-0.02em",
             }}
           >
-            Click everything that applies to you
+            {displayTitle}
           </h2>
           <p style={{ color: "#94a3b8", margin: 0 }}>
             {selected.size > 0
               ? `You selected ${selected.size} — this masterclass solves all of them.`
-              : "Tap the cards below to see how many you relate to."}
+              : displaySubtitle}
           </p>
         </div>
 
@@ -80,7 +97,7 @@ export default function PainPoints() {
             marginBottom: "2.5rem",
           }}
         >
-          {PAIN_POINTS.map((point, i) => {
+          {displayItems.map((point, i) => {
             const isSelected = selected.has(i);
             return (
               <button

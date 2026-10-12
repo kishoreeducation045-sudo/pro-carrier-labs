@@ -80,6 +80,22 @@ export default async function HomePage() {
   const stat3 = { value: settingsMap.stat3_value, label: settingsMap.stat3_label };
   const stat4 = { value: settingsMap.stat4_value, label: settingsMap.stat4_label };
 
+  // Pain Points from admin CMS
+  let painPointsItems: string[] | undefined;
+  try {
+    painPointsItems = settingsMap.pain_points_items ? JSON.parse(settingsMap.pain_points_items) : undefined;
+  } catch {
+    painPointsItems = undefined;
+  }
+
+  // Free Bonuses from admin CMS
+  let bonusesItems: any[] | undefined;
+  try {
+    bonusesItems = settingsMap.bonuses_items ? JSON.parse(settingsMap.bonuses_items) : undefined;
+  } catch {
+    bonusesItems = undefined;
+  }
+
   return (
     <main style={{ background: "#0a0f1e", minHeight: "100vh" }}>
       {/* Ticker + Nav */}
@@ -100,12 +116,22 @@ export default async function HomePage() {
       <div className="section-divider" />
 
       {/* Pain Points — interactive */}
-      <PainPoints />
+      <PainPoints
+        badge={settingsMap.pain_points_badge}
+        title={settingsMap.pain_points_title}
+        subtitle={settingsMap.pain_points_subtitle}
+        items={painPointsItems}
+      />
 
       <div className="section-divider" />
 
       {/* Bonus Stack — swapped in place of How It Works */}
-      <BonusStack />
+      <BonusStack
+        badge={settingsMap.bonuses_badge}
+        title={settingsMap.bonuses_title}
+        subtitle={settingsMap.bonuses_subtitle}
+        bonuses={bonusesItems}
+      />
 
       <div className="section-divider" />
 
