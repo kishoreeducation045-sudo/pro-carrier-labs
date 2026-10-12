@@ -192,7 +192,7 @@ export default function FeaturedCohort({ cohort }: FeaturedCohortProps) {
 
           {/* CTA */}
           <Link
-            href="/courses"
+            href="/workshops"
             style={{
               display: "flex",
               alignItems: "center",

@@ -36,7 +36,7 @@ export default function AdminSidebar() {
     { name: "Analytics Overview", href: "/admin", icon: <LayoutDashboard size={18} /> },
     { name: "Homepage and Cohort", href: "/admin/cohort", icon: <Calendar size={18} />, highlight: true },
     { name: "Changes in Website", href: "/admin/website-content", icon: <LayoutTemplate size={18} /> },
-    { name: "Course Management", href: "/admin/courses", icon: <BookOpen size={18} /> },
+    { name: "Workshop Management", href: "/admin/workshops", icon: <BookOpen size={18} /> },
     { name: "Students & UTRs", href: "/admin/students", icon: <Users size={18} /> },
     { name: "Site & Ticker Settings", href: "/admin/site-settings", icon: <Sliders size={18} /> },
     { name: "Refunds & Invoices", href: "/admin/refunds", icon: <RotateCcw size={18} /> },
@@ -162,23 +162,6 @@ export default function AdminSidebar() {
           }}
         >
           <span>View Public Site</span>
-          <ExternalLink size={14} />
-        </Link>
-        <Link
-          href="/dashboard"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0.5rem 0.875rem",
-            color: "#94a3b8",
-            fontSize: "0.8125rem",
-            textDecoration: "none",
-            borderRadius: 8,
-            marginBottom: "0.5rem",
-          }}
-        >
-          <span>Student Portal View</span>
           <ExternalLink size={14} />
         </Link>
 

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 
 const PAIN_POINTS = [
@@ -143,8 +144,8 @@ export default function PainPoints({
             <p style={{ color: "#94a3b8", margin: "0 0 1rem" }}>
               Neeraj addresses every single one of these in 3 hours.
             </p>
-            <a
-              href="/courses"
+            <Link
+              href="/workshops"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -159,7 +160,7 @@ export default function PainPoints({
               }}
             >
               Reserve My Seat Now →
-            </a>
+            </Link>
           </div>
         )}
       </div>

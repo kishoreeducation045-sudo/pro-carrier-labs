@@ -279,7 +279,7 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
             }}
           >
             <Link
-              href="/courses"
+              href="/workshops"
               style={{
                 display: "inline-flex",
                 alignItems: "center",

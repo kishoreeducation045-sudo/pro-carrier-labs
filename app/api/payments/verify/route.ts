@@ -8,15 +8,10 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
     const adminSupabase = await createAdminClient();
 
-    // Authenticate user
+    // Check optional authenticated user
     const {
       data: { user },
-      error: authError,
     } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized. Please log in." }, { status: 401 });
-    }
 
     const body = await request.json();
     const {
@@ -29,10 +24,37 @@ export async function POST(request: NextRequest) {
       city,
       state,
       pincode,
+      userId,
+      email,
+      fullName,
     } = body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !course_id) {
       return NextResponse.json({ error: "Missing payment parameters" }, { status: 400 });
+    }
+
+    // Determine target user ID
+    let targetUserId = user?.id || userId;
+    if (!targetUserId && email) {
+      const { data: u } = await adminSupabase
+        .from("users")
+        .select("id")
+        .eq("email", String(email).trim().toLowerCase())
+        .maybeSingle();
+      if (u) targetUserId = u.id;
+    }
+
+    if (!targetUserId) {
+      // Auto-create user record if completely new
+      const newId = crypto.randomUUID();
+      const studentEmail = email || `${razorpay_payment_id}@guest.procareerlabs.com`;
+      await adminSupabase.from("users").insert({
+        id: newId,
+        email: studentEmail,
+        full_name: fullName || "Workshop Attendee",
+        role: "student",
+      });
+      targetUserId = newId;
     }
 
     // 1. Verify Razorpay cryptographic HMAC signature
@@ -53,8 +75,8 @@ export async function POST(request: NextRequest) {
     let { data: studentProfile } = await adminSupabase
       .from("student_profiles")
       .select("*")
-      .eq("user_id", user.id)
-      .single();
+      .eq("user_id", targetUserId)
+      .maybeSingle();
 
     if (!studentProfile) {
       // Create new student profile
@@ -62,9 +84,9 @@ export async function POST(request: NextRequest) {
       const { data: newProfile } = await adminSupabase
         .from("student_profiles")
         .insert({
-          user_id: user.id,
+          user_id: targetUserId,
           student_id: newStudentCode,
-          phone: phone || paymentDetails.contact || user.user_metadata?.phone,
+          phone: phone || paymentDetails.contact || "",
           address: address || "",
           city: city || "",
           state: state || "",
@@ -95,30 +117,31 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Fetch user full name & course details
+    // Fetch user full name & workshop details
     const { data: userData } = await adminSupabase
       .from("users")
       .select("full_name, email")
-      .eq("id", user.id)
-      .single();
+      .eq("id", targetUserId)
+      .maybeSingle();
 
-    const studentName = userData?.full_name || user.user_metadata?.full_name || user.email?.split("@")[0] || "Learner";
-    const studentEmail = user.email || paymentDetails.email || "";
+    const studentName = userData?.full_name || fullName || user?.user_metadata?.full_name || "Workshop Attendee";
+    const studentEmail = userData?.email || email || paymentDetails.email || "";
 
     const { data: course } = await adminSupabase
       .from("courses")
-      .select("id, title, price_inr, zoom_link")
+      .select("id, title, price_inr, zoom_link, slug")
       .eq("id", course_id)
       .single();
 
     const courseTitle = course?.title || "AI Masterclass";
+    const courseSlug = course?.slug || "ai-masterclass";
     const amountPaid = paymentDetails.amount || course?.price_inr || 299;
 
     // 4. Save transaction record with Razorpay UTR ID and full student info
     const { data: transaction, error: txError } = await adminSupabase
       .from("transactions")
       .insert({
-        user_id: user.id,
+        user_id: targetUserId,
         course_id: course_id,
         student_profile_id: studentProfile?.id,
         student_id_code: studentProfile?.student_id,
@@ -147,7 +170,7 @@ export async function POST(request: NextRequest) {
       .from("enrollments")
       .upsert(
         {
-          user_id: user.id,
+          user_id: targetUserId,
           course_id: course_id,
           transaction_id: transaction?.id,
           student_profile_id: studentProfile?.id,
@@ -165,15 +188,21 @@ export async function POST(request: NextRequest) {
     }
 
     // 6. Send confirmation email with student ID & UTR ID
-    await sendEnrollmentConfirmationEmail({
-      to: studentEmail,
-      name: studentName,
-      courseTitle,
-      amount: amountPaid,
-      utrId: paymentDetails.utrId,
-      studentId: studentProfile?.student_id || "PCL-PENDING",
-      zoomLink: course?.zoom_link,
-    });
+    try {
+      if (studentEmail) {
+        await sendEnrollmentConfirmationEmail({
+          to: studentEmail,
+          name: studentName,
+          courseTitle,
+          amount: amountPaid,
+          utrId: paymentDetails.utrId,
+          studentId: studentProfile?.student_id || "PCL-PENDING",
+          zoomLink: course?.zoom_link,
+        });
+      }
+    } catch (emailErr) {
+      console.warn("Could not dispatch confirmation email:", emailErr);
+    }
 
     return NextResponse.json({
       success: true,
@@ -182,12 +211,11 @@ export async function POST(request: NextRequest) {
       studentId: studentProfile?.student_id,
       utrId: paymentDetails.utrId,
       courseId: course_id,
+      courseSlug,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Payment verification fatal error:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to process payment verification" },
-      { status: 500 }
-    );
+    const msg = error instanceof Error ? error.message : "Failed to process payment verification";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

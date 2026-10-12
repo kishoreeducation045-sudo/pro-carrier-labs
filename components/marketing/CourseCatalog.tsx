@@ -141,7 +141,7 @@ export default function CourseCatalog({ courses = DEFAULT_COURSES }: CourseCatal
 
   return (
     <section
-      id="courses"
+      id="workshops"
       style={{
         padding: "5rem 1.5rem",
         background: "linear-gradient(180deg, #0a0f1e 0%, #0d1526 100%)",
@@ -176,7 +176,7 @@ export default function CourseCatalog({ courses = DEFAULT_COURSES }: CourseCatal
                 marginBottom: "1rem",
               }}
             >
-              All Courses & Masterclasses ({displayCourses.length})
+              All Workshops & Masterclasses ({displayCourses.length})
             </span>
             <h2
               style={{
@@ -190,7 +190,7 @@ export default function CourseCatalog({ courses = DEFAULT_COURSES }: CourseCatal
               Learn. Grow. Earn.
             </h2>
             <p style={{ color: "#94a3b8", fontSize: "1.0625rem", margin: 0 }}>
-              Expert-led courses designed for working professionals in India
+              Expert-led workshops designed for working professionals in India
             </p>
           </div>
 
@@ -265,7 +265,7 @@ export default function CourseCatalog({ courses = DEFAULT_COURSES }: CourseCatal
           {displayCourses.map((course) => (
             <Link
               key={course.id}
-              href={`/courses/${course.slug}`}
+              href={`/workshops/${course.slug}`}
               style={{
                 textDecoration: "none",
                 flex: isHorizontalScroll ? "0 0 290px" : undefined,
@@ -427,7 +427,7 @@ export default function CourseCatalog({ courses = DEFAULT_COURSES }: CourseCatal
                         fontSize: "0.875rem",
                       }}
                     >
-                      Enroll <ArrowRight size={15} />
+                      Enroll in Workshop <ArrowRight size={15} />
                     </div>
                   </div>
                 </div>

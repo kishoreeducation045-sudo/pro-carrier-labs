@@ -97,7 +97,7 @@ export default async function AdminDashboardPage() {
             <Calendar size={16} /> Edit Live Cohort
           </Link>
           <Link
-            href="/admin/courses"
+            href="/admin/workshops"
             style={{
               background: "#1e6fff",
               color: "#fff",
@@ -111,7 +111,7 @@ export default async function AdminDashboardPage() {
               gap: "0.5rem",
             }}
           >
-            <BookOpen size={16} /> Manage Courses
+            <BookOpen size={16} /> Manage Workshops
           </Link>
         </div>
       </div>
@@ -174,7 +174,7 @@ export default async function AdminDashboardPage() {
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", color: "#64748b", marginBottom: "0.75rem" }}>
-            <span style={{ fontSize: "0.875rem", fontWeight: 600 }}>Published Courses</span>
+            <span style={{ fontSize: "0.875rem", fontWeight: 600 }}>Published Workshops</span>
             <BookOpen size={20} color="#f5a623" />
           </div>
           <div style={{ fontSize: "2rem", fontWeight: 900, color: "#f9fafb" }}>

@@ -25,44 +25,39 @@ export function loadRazorpayScript(): Promise<boolean> {
   });
 }
 
+export interface StudentRegistrationData {
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+}
+
 export interface CheckoutOptions {
   courseId: string;
   courseTitle?: string;
   onSuccess?: (data: any) => void;
   onError?: (err: any) => void;
   onClose?: () => void;
-  additionalStudentData?: {
-    phone?: string;
-    address?: string;
-    city?: string;
-    state?: string;
-    pincode?: string;
-  };
+  additionalStudentData?: StudentRegistrationData;
 }
 
 export async function initiateCourseCheckout(options: CheckoutOptions) {
   const { courseId, onSuccess, onError, onClose, additionalStudentData } = options;
 
   try {
-    // 1. Create order on server
+    // 1. Create order on server with student details
     const res = await fetch(`/api/enroll/${courseId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(additionalStudentData || {}),
     });
-
-    if (res.status === 401) {
-      // Not logged in -> redirect to login with return path
-      window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
-      return;
-    }
 
     const orderData = await res.json();
 
     if (!res.ok) {
-      if (orderData.alreadyEnrolled) {
-        window.location.href = "/my-courses";
-        return;
-      }
       throw new Error(orderData.error || "Failed to initialize order");
     }
 
@@ -78,12 +73,12 @@ export async function initiateCourseCheckout(options: CheckoutOptions) {
       amount: orderData.amount,
       currency: orderData.currency || "INR",
       name: "ProCareerLabs",
-      description: orderData.courseName || "AI Masterclass Enrollment",
+      description: orderData.courseName || "AI Workshop Enrollment",
       image: "https://procareerlabs.com/favicon.ico",
       order_id: orderData.orderId,
       prefill: {
-        name: orderData.prefill?.name || "",
-        email: orderData.prefill?.email || "",
+        name: orderData.prefill?.name || additionalStudentData?.fullName || "",
+        email: orderData.prefill?.email || additionalStudentData?.email || "",
         contact: additionalStudentData?.phone || orderData.prefill?.contact || "",
       },
       theme: {
@@ -106,6 +101,9 @@ export async function initiateCourseCheckout(options: CheckoutOptions) {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
               course_id: orderData.courseId,
+              userId: orderData.userId,
+              email: orderData.prefill?.email || additionalStudentData?.email,
+              fullName: orderData.prefill?.name || additionalStudentData?.fullName,
               phone: additionalStudentData?.phone || orderData.prefill?.contact,
               address: additionalStudentData?.address,
               city: additionalStudentData?.city,
@@ -123,8 +121,11 @@ export async function initiateCourseCheckout(options: CheckoutOptions) {
           if (onSuccess) {
             onSuccess(verifyData);
           } else {
-            // Redirect to student courses with success state
-            window.location.href = `/my-courses?enrolled=success&courseId=${orderData.courseId}&utr=${verifyData.utrId}`;
+            // Redirect to workshop confirmation & WhatsApp community page
+            const slug = verifyData.courseSlug || orderData.courseSlug || "ai-masterclass";
+            const studentCode = verifyData.studentId || "";
+            const utr = verifyData.utrId || "";
+            window.location.href = `/workshops/${slug}/confirmation?studentId=${encodeURIComponent(studentCode)}&utr=${encodeURIComponent(utr)}&orderId=${encodeURIComponent(response.razorpay_order_id)}`;
           }
         } catch (verifyErr: any) {
           if (onError) onError(verifyErr);

@@ -33,7 +33,7 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { label: "Courses", href: "/courses" },
+    { label: "Workshops", href: "/workshops" },
     { label: "About", href: "#instructor" },
     { label: "Testimonials", href: "#testimonials" },
     { label: "FAQ", href: "#faq" },
@@ -144,13 +144,30 @@ export default function Navbar() {
                   user.role === "super_admin" ||
                   user.role === "admin" ||
                   isAdminEmail(user.email);
+                if (isAdmin) {
+                  return (
+                    <Link
+                      href="/admin"
+                      style={{
+                        background: "linear-gradient(135deg, #1e6fff, #f5a623)",
+                        color: "#fff",
+                        fontWeight: 700,
+                        fontSize: "0.875rem",
+                        padding: "0.5rem 1.25rem",
+                        borderRadius: 9999,
+                        textDecoration: "none",
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      👑 Admin Console
+                    </Link>
+                  );
+                }
                 return (
                   <Link
-                    href={isAdmin ? "/admin" : "/dashboard"}
+                    href="/workshops"
                     style={{
-                      background: isAdmin
-                        ? "linear-gradient(135deg, #1e6fff, #f5a623)"
-                        : "#1e6fff",
+                      background: "#1e6fff",
                       color: "#fff",
                       fontWeight: 700,
                       fontSize: "0.875rem",
@@ -160,7 +177,7 @@ export default function Navbar() {
                       transition: "all 0.2s",
                     }}
                   >
-                    {isAdmin ? "👑 Admin Console" : "🎓 Dashboard"}
+                    Enroll Now
                   </Link>
                 );
               })()}
@@ -174,7 +191,7 @@ export default function Navbar() {
                     await fetch("/api/auth/signout", { method: "POST" });
                   } catch {}
                   document.cookie = "pcl_dev_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-                  window.location.href = "/login";
+                  window.location.href = "/";
                 }}
                 style={{
                   background: "rgba(255,255,255,0.06)",
@@ -191,37 +208,22 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <>
-              <Link
-                href="/login"
-                style={{
-                  color: "#94a3b8",
-                  fontWeight: 500,
-                  fontSize: "0.9375rem",
-                  textDecoration: "none",
-                  transition: "color 0.2s",
-                }}
-                className="hidden md:block"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/courses"
-                style={{
-                  background: "#1e6fff",
-                  color: "#fff",
-                  fontWeight: 600,
-                  fontSize: "0.9375rem",
-                  padding: "0.625rem 1.5rem",
-                  borderRadius: 9999,
-                  textDecoration: "none",
-                  boxShadow: "0 0 20px rgba(30,111,255,0.3)",
-                  transition: "all 0.2s",
-                }}
-              >
-                Enroll Now
-              </Link>
-            </>
+            <Link
+              href="/workshops"
+              style={{
+                background: "#1e6fff",
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: "0.9375rem",
+                padding: "0.625rem 1.5rem",
+                borderRadius: 9999,
+                textDecoration: "none",
+                boxShadow: "0 0 20px rgba(30,111,255,0.3)",
+                transition: "all 0.2s",
+              }}
+            >
+              Enroll Now
+            </Link>
           )}
 
           {/* Mobile menu toggle */}
@@ -282,7 +284,7 @@ export default function Navbar() {
             Sign In
           </Link>
           <Link
-            href="/courses"
+            href="/workshops"
             style={{
               background: "#1e6fff",
               color: "#fff",

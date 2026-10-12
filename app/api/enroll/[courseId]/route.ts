@@ -10,70 +10,107 @@ export async function POST(
     const supabase = await createClient();
     const adminSupabase = await createAdminClient();
 
-    // Verify user is logged in
+    // Check optional authenticated user
     const {
       data: { user },
-      error: authError,
     } = await supabase.auth.getUser();
 
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized. Please log in first." }, { status: 401 });
-    }
-
+    const body = await request.json().catch(() => ({}));
     const { courseId } = await params;
 
-    // Fetch course details
-    const { data: course, error: courseError } = await adminSupabase
-      .from("courses")
-      .select("id, title, price_inr, status")
-      .eq("id", courseId)
-      .single();
+    let effectiveUserId: string;
+    let effectiveEmail = "";
+    let effectiveName = "";
+    let effectivePhone = "";
 
-    if (courseError || !course) {
-      // Fallback: check if courseId is 'featured' or slug
-      const { data: slugCourse } = await adminSupabase
-        .from("courses")
-        .select("id, title, price_inr, status")
-        .or(`slug.eq.${courseId},id.eq.${courseId}`)
-        .single();
+    if (user) {
+      effectiveUserId = user.id;
+      effectiveEmail = user.email || "";
+      effectiveName = user.user_metadata?.full_name || user.email?.split("@")[0] || "Learner";
+      effectivePhone = body.phone || user.user_metadata?.phone || "";
+    } else if (body.email) {
+      effectiveEmail = String(body.email).trim().toLowerCase();
+      effectiveName = String(body.fullName || body.name || effectiveEmail.split("@")[0]).trim();
+      effectivePhone = String(body.phone || "").trim();
 
-      if (!slugCourse) {
-        return NextResponse.json({ error: "Course not found" }, { status: 404 });
+      // Find or create student in public.users
+      const { data: existingUser } = await adminSupabase
+        .from("users")
+        .select("id, full_name, email")
+        .eq("email", effectiveEmail)
+        .maybeSingle();
+
+      if (existingUser) {
+        effectiveUserId = existingUser.id;
+        effectiveName = existingUser.full_name || effectiveName;
+      } else {
+        const newId = crypto.randomUUID();
+        await adminSupabase.from("users").insert({
+          id: newId,
+          email: effectiveEmail,
+          full_name: effectiveName,
+          role: "student",
+        });
+        effectiveUserId = newId;
       }
-    }
 
-    const targetCourse = course || (await adminSupabase.from("courses").select("id, title, price_inr").single()).data;
-    const finalCourseId = targetCourse?.id || courseId;
-    const finalCourseTitle = targetCourse?.title || "AI Masterclass";
-    const finalPrice = targetCourse?.price_inr || 299;
+      // Ensure student profile exists with PCL ID
+      const { data: existingProfile } = await adminSupabase
+        .from("student_profiles")
+        .select("id, student_id")
+        .eq("user_id", effectiveUserId)
+        .maybeSingle();
 
-    // Check if already enrolled
-    const { data: existing } = await adminSupabase
-      .from("enrollments")
-      .select("id, status")
-      .eq("user_id", user.id)
-      .eq("course_id", finalCourseId)
-      .eq("status", "active")
-      .maybeSingle();
-
-    if (existing) {
+      if (!existingProfile) {
+        const studentCode = `PCL-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
+        await adminSupabase.from("student_profiles").insert({
+          user_id: effectiveUserId,
+          student_id: studentCode,
+          phone: effectivePhone,
+          city: body.city || "",
+          profile_complete: true,
+        });
+      }
+    } else {
       return NextResponse.json(
-        { error: "You are already enrolled in this course.", alreadyEnrolled: true },
-        { status: 409 }
+        { error: "Please provide your Name, Email, and Phone number to enroll." },
+        { status: 400 }
       );
     }
 
-    // Fetch student profile for pre-fill
+    // Fetch workshop details
+    const { data: course, error: courseError } = await adminSupabase
+      .from("courses")
+      .select("id, title, price_inr, status, slug")
+      .eq("id", courseId)
+      .single();
+
+    let targetCourse = course;
+    if (courseError || !course) {
+      // Fallback: check if courseId is slug
+      const { data: slugCourse } = await adminSupabase
+        .from("courses")
+        .select("id, title, price_inr, status, slug")
+        .or(`slug.eq.${courseId},id.eq.${courseId}`)
+        .single();
+
+      targetCourse = slugCourse;
+    }
+
+    if (!targetCourse) {
+      return NextResponse.json({ error: "Workshop not found" }, { status: 404 });
+    }
+
+    const finalCourseId = targetCourse.id;
+    const finalCourseTitle = targetCourse.title || "AI Masterclass";
+    const finalCourseSlug = targetCourse.slug || "ai-masterclass";
+    const finalPrice = targetCourse.price_inr || 299;
+
+    // Check if student profile exists for pre-fill
     const { data: profile } = await adminSupabase
       .from("student_profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-    const { data: userData } = await adminSupabase
-      .from("users")
-      .select("full_name, email")
-      .eq("id", user.id)
+      .select("phone, student_id")
+      .eq("user_id", effectiveUserId)
       .maybeSingle();
 
     // Create Razorpay order (amount in paise)
@@ -84,12 +121,15 @@ export async function POST(
       order = await razorpayInstance.orders.create({
         amount: amountInPaise,
         currency: "INR",
-        receipt: `rcpt_${user.id.slice(0, 8)}_${Date.now().toString().slice(-6)}`,
+        receipt: `rcpt_${effectiveUserId.slice(0, 8)}_${Date.now().toString().slice(-6)}`,
         notes: {
           courseId: finalCourseId,
           courseName: finalCourseTitle,
-          userId: user.id,
-          userEmail: user.email || "",
+          courseSlug: finalCourseSlug,
+          userId: effectiveUserId,
+          userEmail: effectiveEmail,
+          userName: effectiveName,
+          userPhone: effectivePhone || profile?.phone || "",
         },
       });
     } catch (orderErr) {
@@ -108,17 +148,18 @@ export async function POST(
       keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_placeholder",
       courseId: finalCourseId,
       courseName: finalCourseTitle,
+      courseSlug: finalCourseSlug,
+      userId: effectiveUserId,
+      studentId: profile?.student_id,
       prefill: {
-        name: userData?.full_name || user.user_metadata?.full_name || user.email?.split("@")[0] || "",
-        email: user.email || "",
-        contact: profile?.phone || user.user_metadata?.phone || "",
+        name: effectiveName,
+        email: effectiveEmail,
+        contact: effectivePhone || profile?.phone || "",
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error initiating enrollment order:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to initiate checkout order" },
-      { status: 500 }
-    );
+    const msg = error instanceof Error ? error.message : "Failed to initiate checkout order";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

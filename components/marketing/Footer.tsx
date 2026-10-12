@@ -1,24 +1,23 @@
 "use client";
 import Link from "next/link";
-import { Zap, Mail, Phone, Globe, MessageSquare, Share2 } from "lucide-react";
+import { Zap, Mail, Globe, MessageSquare, Share2 } from "lucide-react";
 
 export default function Footer() {
   const year = new Date().getFullYear();
 
   const links = {
-    Platform: [
-      { label: "All Courses", href: "/courses" },
-      { label: "AI Masterclass", href: "/courses/ai-masterclass" },
-      { label: "LinkedIn Growth", href: "/courses/linkedin-growth" },
-      { label: "CA Intermediate", href: "/courses/ca-intermediate" },
-      { label: "Resume Coaching", href: "/courses/resume-career-coaching" },
+    Workshops: [
+      { label: "All Workshops", href: "/workshops" },
+      { label: "AI Masterclass", href: "/workshops/ai-masterclass" },
+      { label: "Prompt Engineering Pro", href: "/workshops/prompt-engineering-pro" },
+      { label: "Fullstack AI Bootcamp", href: "/workshops/fullstack-ai-developer" },
+      { label: "No-Code AI Automation", href: "/workshops/nocode-ai-automation" },
     ],
-    Account: [
-      { label: "Sign In", href: "/login" },
-      { label: "Create Account", href: "/signup" },
-      { label: "My Dashboard", href: "/dashboard" },
-      { label: "My Courses", href: "/my-courses" },
-      { label: "My Certificates", href: "/certificates" },
+    Administration: [
+      { label: "Admin Console", href: "/admin" },
+      { label: "Admin Sign In", href: "/login" },
+      { label: "Cohort Settings", href: "/admin/cohort" },
+      { label: "Changes in Website", href: "/admin/website-content" },
     ],
     Legal: [
       { label: "Privacy Policy", href: "#privacy" },
