@@ -22,7 +22,7 @@ import { isAdminEmail } from "@/lib/utils";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") ?? "/dashboard";
+  const next = searchParams.get("next") ?? "/";
   const urlError = searchParams.get("error");
 
   const [email, setEmail] = useState("");
@@ -85,8 +85,10 @@ function LoginForm() {
       }
 
       if (data?.user) {
+        const destination = next && next !== "/dashboard" ? next : "/";
+
         if (isAdminEmail(data.user.email)) {
-          window.location.href = "/admin";
+          window.location.href = destination;
           return;
         }
 
@@ -103,13 +105,13 @@ function LoginForm() {
             ["admin", "super_admin", "course_admin", "content_manager"].includes(profile.role);
 
           if (isAdmin) {
-            window.location.href = "/admin";
+            window.location.href = destination;
             return;
           }
         } catch {}
 
-        // For all regular students, navigate to student learning dashboard
-        window.location.href = next && next !== "/admin" ? next : "/dashboard";
+        // For all regular users, navigate to destination (main webpage by default)
+        window.location.href = destination;
       } else {
         setError("Invalid credentials. Please try again.");
         setLoading(false);

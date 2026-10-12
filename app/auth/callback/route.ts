@@ -6,7 +6,7 @@ import { isAdminEmail } from "@/lib/utils";
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const next = url.searchParams.get("next") ?? "/dashboard";
+  const next = url.searchParams.get("next") ?? "/";
   const origin = url.origin;
 
   if (!code) {
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
     data.user.user_metadata?.name ||
     email.split("@")[0];
 
-  let targetDestination = "/dashboard";
+  let targetDestination = "/";
 
   try {
     const adminSupabase = createServerClient(
@@ -103,11 +103,11 @@ export async function GET(request: NextRequest) {
       isAdminEmail(email) ||
       ["admin", "super_admin", "course_admin", "content_manager"].includes(assignedRole || "");
 
-    targetDestination = isAdmin ? "/admin" : (next && next !== "/admin" ? next : "/dashboard");
+    targetDestination = next && next !== "/dashboard" ? next : (isAdmin ? "/admin" : "/");
   } catch (syncErr) {
     console.warn("[auth/callback] User sync warning:", syncErr);
     // Fall back to email-based role check
-    targetDestination = isAdminEmail(email) ? "/admin" : "/dashboard";
+    targetDestination = next && next !== "/dashboard" ? next : (isAdminEmail(email) ? "/admin" : "/");
   }
 
   console.log(`[auth/callback] ${email} → ${targetDestination}`);

@@ -208,22 +208,52 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <Link
-              href="/workshops"
-              style={{
-                background: "#1e6fff",
-                color: "#fff",
-                fontWeight: 600,
-                fontSize: "0.9375rem",
-                padding: "0.625rem 1.5rem",
-                borderRadius: 9999,
-                textDecoration: "none",
-                boxShadow: "0 0 20px rgba(30,111,255,0.3)",
-                transition: "all 0.2s",
-              }}
-            >
-              Enroll Now
-            </Link>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+              <Link
+                href="/login?next=/"
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  color: "#f9fafb",
+                  fontWeight: 600,
+                  fontSize: "0.875rem",
+                  padding: "0.55rem 1.125rem",
+                  borderRadius: 9999,
+                  textDecoration: "none",
+                  transition: "all 0.2s ease",
+                  display: "inline-flex",
+                  alignItems: "center",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(30,111,255,0.5)";
+                  (e.currentTarget as HTMLElement).style.background = "rgba(30,111,255,0.12)";
+                  (e.currentTarget as HTMLElement).style.color = "#60a5fa";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.15)";
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.06)";
+                  (e.currentTarget as HTMLElement).style.color = "#f9fafb";
+                }}
+              >
+                Login
+              </Link>
+              <Link
+                href="/workshops"
+                style={{
+                  background: "#1e6fff",
+                  color: "#fff",
+                  fontWeight: 600,
+                  fontSize: "0.875rem",
+                  padding: "0.55rem 1.375rem",
+                  borderRadius: 9999,
+                  textDecoration: "none",
+                  boxShadow: "0 0 20px rgba(30,111,255,0.3)",
+                  transition: "all 0.2s",
+                }}
+              >
+                Enroll Now
+              </Link>
+            </div>
           )}
 
           {/* Mobile menu toggle */}
@@ -271,18 +301,20 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <Link
-            href="/login"
-            style={{
-              color: "#f9fafb",
-              textDecoration: "none",
-              fontWeight: 500,
-              padding: "0.5rem 0",
-            }}
-            onClick={() => setIsMobileOpen(false)}
-          >
-            Sign In
-          </Link>
+          {!user && (
+            <Link
+              href="/login?next=/"
+              style={{
+                color: "#60a5fa",
+                textDecoration: "none",
+                fontWeight: 600,
+                padding: "0.5rem 0",
+              }}
+              onClick={() => setIsMobileOpen(false)}
+            >
+              Login
+            </Link>
+          )}
           <Link
             href="/workshops"
             style={{

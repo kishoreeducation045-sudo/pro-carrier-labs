@@ -13,12 +13,6 @@ export default function Footer() {
       { label: "Fullstack AI Bootcamp", href: "/workshops/fullstack-ai-developer" },
       { label: "No-Code AI Automation", href: "/workshops/nocode-ai-automation" },
     ],
-    Administration: [
-      { label: "Admin Console", href: "/admin" },
-      { label: "Admin Sign In", href: "/login" },
-      { label: "Cohort Settings", href: "/admin/cohort" },
-      { label: "Changes in Website", href: "/admin/website-content" },
-    ],
     Legal: [
       { label: "Privacy Policy", href: "#privacy" },
       { label: "Terms of Service", href: "#terms" },
@@ -40,7 +34,7 @@ export default function Footer() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "2fr 1fr 1fr 1fr",
+            gridTemplateColumns: "2fr 1.2fr 1.2fr",
             gap: "3rem",
             marginBottom: "3rem",
           }}
