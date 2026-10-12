@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { painPoints, bonuses } = body;
+    const { painPoints, bonuses, instructor, faq } = body;
 
     const upsertRows: Array<{ key: string; value: string; label: string; updated_by: string; updated_at: string }> = [];
     const now = new Date().toISOString();
@@ -130,6 +130,111 @@ export async function POST(request: NextRequest) {
           key: "bonuses_items",
           value: JSON.stringify(bonuses.items),
           label: "Free Bonuses item list",
+          updated_by: user.id,
+          updated_at: now,
+        });
+      }
+    }
+
+    if (instructor) {
+      if (instructor.badge !== undefined) {
+        upsertRows.push({
+          key: "instructor_badge",
+          value: String(instructor.badge),
+          label: "Your Instructor badge",
+          updated_by: user.id,
+          updated_at: now,
+        });
+      }
+      if (instructor.name !== undefined) {
+        upsertRows.push({
+          key: "instructor_name",
+          value: String(instructor.name),
+          label: "Your Instructor name/heading",
+          updated_by: user.id,
+          updated_at: now,
+        });
+      }
+      if (instructor.bio !== undefined) {
+        upsertRows.push({
+          key: "instructor_bio",
+          value: String(instructor.bio),
+          label: "Your Instructor bio text",
+          updated_by: user.id,
+          updated_at: now,
+        });
+      }
+      if (instructor.imageUrl !== undefined) {
+        upsertRows.push({
+          key: "instructor_image_url",
+          value: String(instructor.imageUrl),
+          label: "Your Instructor photo URL",
+          updated_by: user.id,
+          updated_at: now,
+        });
+      }
+      if (instructor.credentials !== undefined) {
+        upsertRows.push({
+          key: "instructor_credentials",
+          value: JSON.stringify(instructor.credentials),
+          label: "Your Instructor bullet credentials",
+          updated_by: user.id,
+          updated_at: now,
+        });
+      }
+      if (instructor.stats !== undefined) {
+        upsertRows.push({
+          key: "instructor_stats",
+          value: JSON.stringify(instructor.stats),
+          label: "Your Instructor stats boxes",
+          updated_by: user.id,
+          updated_at: now,
+        });
+      }
+      if (instructor.ctaText !== undefined) {
+        upsertRows.push({
+          key: "instructor_cta_text",
+          value: String(instructor.ctaText),
+          label: "Your Instructor CTA button text",
+          updated_by: user.id,
+          updated_at: now,
+        });
+      }
+      if (instructor.ctaLink !== undefined) {
+        upsertRows.push({
+          key: "instructor_cta_link",
+          value: String(instructor.ctaLink),
+          label: "Your Instructor CTA link",
+          updated_by: user.id,
+          updated_at: now,
+        });
+      }
+    }
+
+    if (faq) {
+      if (faq.badge !== undefined) {
+        upsertRows.push({
+          key: "faq_badge",
+          value: String(faq.badge),
+          label: "FAQ badge",
+          updated_by: user.id,
+          updated_at: now,
+        });
+      }
+      if (faq.title !== undefined) {
+        upsertRows.push({
+          key: "faq_title",
+          value: String(faq.title),
+          label: "FAQ title",
+          updated_by: user.id,
+          updated_at: now,
+        });
+      }
+      if (faq.items !== undefined) {
+        upsertRows.push({
+          key: "faq_items",
+          value: JSON.stringify(faq.items),
+          label: "FAQ question and answer items",
           updated_by: user.id,
           updated_at: now,
         });

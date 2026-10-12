@@ -19,7 +19,15 @@ import {
   HelpCircle,
   Gift,
   Eye,
+  UserCheck,
+  MessageSquare,
 } from "lucide-react";
+import InstructorTab, {
+  InstructorStat,
+  DEFAULT_INSTRUCTOR_CREDENTIALS,
+  DEFAULT_INSTRUCTOR_STATS,
+} from "./InstructorTab";
+import FaqTab, { FAQItem, DEFAULT_FAQS } from "./FaqTab";
 
 interface BonusItem {
   title: string;
@@ -74,7 +82,7 @@ const DEFAULT_BONUSES: BonusItem[] = [
 
 export default function WebsiteContentClient({ initialSettings }: WebsiteContentClientProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"pain_points" | "bonuses">("pain_points");
+  const [activeTab, setActiveTab] = useState<"pain_points" | "bonuses" | "instructor" | "faq">("pain_points");
 
   // --- Pain Points State ---
   const [painBadge, setPainBadge] = useState(
@@ -135,6 +143,70 @@ export default function WebsiteContentClient({ initialSettings }: WebsiteContent
     value: 5000,
   });
   const [showBonusAddModal, setShowBonusAddModal] = useState(false);
+
+  // --- Instructor State ---
+  const [instructorBadge, setInstructorBadge] = useState(
+    initialSettings.instructor_badge ?? "Your Instructor"
+  );
+  const [instructorName, setInstructorName] = useState(
+    initialSettings.instructor_name ?? "Meet Neeraj Kumar"
+  );
+  const [instructorBio, setInstructorBio] = useState(
+    initialSettings.instructor_bio ??
+      "Neeraj Kumar is India's leading AI & LinkedIn growth strategist. He has trained over 12,000 working professionals across the country to leverage AI tools and LinkedIn to build income streams — without writing a single line of code."
+  );
+  const [instructorImageUrl, setInstructorImageUrl] = useState(
+    initialSettings.instructor_image_url ?? "/neeraj-suit.jpg"
+  );
+  const [instructorCtaText, setInstructorCtaText] = useState(
+    initialSettings.instructor_cta_text ?? "Learn from Neeraj"
+  );
+  const [instructorCtaLink, setInstructorCtaLink] = useState(
+    initialSettings.instructor_cta_link ?? "/workshops"
+  );
+
+  let parsedCredentials: string[] = DEFAULT_INSTRUCTOR_CREDENTIALS;
+  try {
+    if (initialSettings.instructor_credentials) {
+      const parsed = JSON.parse(initialSettings.instructor_credentials);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        parsedCredentials = parsed;
+      }
+    }
+  } catch {
+    parsedCredentials = DEFAULT_INSTRUCTOR_CREDENTIALS;
+  }
+  const [instructorCredentials, setInstructorCredentials] = useState<string[]>(parsedCredentials);
+
+  let parsedStats: InstructorStat[] = DEFAULT_INSTRUCTOR_STATS;
+  try {
+    if (initialSettings.instructor_stats) {
+      const parsed = JSON.parse(initialSettings.instructor_stats);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        parsedStats = parsed;
+      }
+    }
+  } catch {
+    parsedStats = DEFAULT_INSTRUCTOR_STATS;
+  }
+  const [instructorStats, setInstructorStats] = useState<InstructorStat[]>(parsedStats);
+
+  // --- FAQ State ---
+  const [faqBadge, setFaqBadge] = useState(initialSettings.faq_badge ?? "FAQ");
+  const [faqTitle, setFaqTitle] = useState(initialSettings.faq_title ?? "Questions, answered");
+
+  let parsedFaqs: FAQItem[] = DEFAULT_FAQS;
+  try {
+    if (initialSettings.faq_items) {
+      const parsed = JSON.parse(initialSettings.faq_items);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        parsedFaqs = parsed;
+      }
+    }
+  } catch {
+    parsedFaqs = DEFAULT_FAQS;
+  }
+  const [faqItems, setFaqItems] = useState<FAQItem[]>(parsedFaqs);
 
   // Status & Notifications
   const [saving, setSaving] = useState(false);
@@ -278,6 +350,21 @@ export default function WebsiteContentClient({ initialSettings }: WebsiteContent
           subtitle: bonusSubtitle,
           items: bonusItems,
         },
+        instructor: {
+          badge: instructorBadge,
+          name: instructorName,
+          bio: instructorBio,
+          imageUrl: instructorImageUrl,
+          ctaText: instructorCtaText,
+          ctaLink: instructorCtaLink,
+          credentials: instructorCredentials,
+          stats: instructorStats,
+        },
+        faq: {
+          badge: faqBadge,
+          title: faqTitle,
+          items: faqItems,
+        },
       };
 
       const res = await fetch("/api/admin/website-content", {
@@ -291,7 +378,7 @@ export default function WebsiteContentClient({ initialSettings }: WebsiteContent
         throw new Error(data.error || "Failed to save website content");
       }
 
-      setSaveSuccess("Changes saved successfully! Both sections are updated live on the website.");
+      setSaveSuccess("Changes saved successfully! All marketing sections are updated live on the website.");
       router.refresh();
       setTimeout(() => setSaveSuccess(""), 5000);
     } catch (err: unknown) {
@@ -336,10 +423,12 @@ export default function WebsiteContentClient({ initialSettings }: WebsiteContent
           <h1 style={{ fontSize: "1.875rem", fontWeight: 800, color: "#f9fafb", margin: "0 0 0.5rem" }}>
             Changes in Website
           </h1>
-          <p style={{ color: "#94a3b8", fontSize: "0.9375rem", margin: 0, maxWidth: 650 }}>
-            Manage the content, headings, and items for the{" "}
-            <strong style={{ color: "#f9fafb" }}>&quot;Does This Sound Like You?&quot;</strong> and{" "}
-            <strong style={{ color: "#f9fafb" }}>&quot;Free Bonuses&quot;</strong> marketing sections.
+          <p style={{ color: "#94a3b8", fontSize: "0.9375rem", margin: 0, maxWidth: 680 }}>
+            Manage and edit the live marketing content for{" "}
+            <strong style={{ color: "#f9fafb" }}>&quot;Does This Sound Like You?&quot;</strong>,{" "}
+            <strong style={{ color: "#f9fafb" }}>&quot;Free Bonuses&quot;</strong>,{" "}
+            <strong style={{ color: "#f9fafb" }}>&quot;Your Instructor&quot;</strong>, and{" "}
+            <strong style={{ color: "#f9fafb" }}>&quot;FAQ&quot;</strong> sections.
           </p>
         </div>
 
@@ -440,35 +529,36 @@ export default function WebsiteContentClient({ initialSettings }: WebsiteContent
       <div
         style={{
           display: "flex",
-          gap: "0.75rem",
+          gap: "0.625rem",
           background: "rgba(17, 24, 39, 0.6)",
           padding: "0.375rem",
           borderRadius: 14,
           border: "1px solid rgba(255, 255, 255, 0.08)",
           marginBottom: "2rem",
+          flexWrap: "wrap",
         }}
       >
         <button
           type="button"
           onClick={() => setActiveTab("pain_points")}
           style={{
-            flex: 1,
+            flex: "1 1 200px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             gap: "0.625rem",
-            padding: "0.875rem 1.25rem",
+            padding: "0.875rem 1rem",
             borderRadius: 10,
             border: activeTab === "pain_points" ? "1px solid rgba(30,111,255,0.4)" : "1px solid transparent",
             background: activeTab === "pain_points" ? "rgba(30,111,255,0.18)" : "transparent",
             color: activeTab === "pain_points" ? "#60a5fa" : "#94a3b8",
             fontWeight: activeTab === "pain_points" ? 700 : 500,
-            fontSize: "0.9375rem",
+            fontSize: "0.875rem",
             cursor: "pointer",
             transition: "all 0.15s ease",
           }}
         >
-          <HelpCircle size={18} color={activeTab === "pain_points" ? "#60a5fa" : "#94a3b8"} />
+          <HelpCircle size={17} color={activeTab === "pain_points" ? "#60a5fa" : "#94a3b8"} />
           <span>Does This Sound Like You?</span>
           <span
             style={{
@@ -488,23 +578,23 @@ export default function WebsiteContentClient({ initialSettings }: WebsiteContent
           type="button"
           onClick={() => setActiveTab("bonuses")}
           style={{
-            flex: 1,
+            flex: "1 1 180px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             gap: "0.625rem",
-            padding: "0.875rem 1.25rem",
+            padding: "0.875rem 1rem",
             borderRadius: 10,
             border: activeTab === "bonuses" ? "1px solid rgba(245,166,35,0.4)" : "1px solid transparent",
             background: activeTab === "bonuses" ? "rgba(245,166,35,0.14)" : "transparent",
             color: activeTab === "bonuses" ? "#f5a623" : "#94a3b8",
             fontWeight: activeTab === "bonuses" ? 700 : 500,
-            fontSize: "0.9375rem",
+            fontSize: "0.875rem",
             cursor: "pointer",
             transition: "all 0.15s ease",
           }}
         >
-          <Gift size={18} color={activeTab === "bonuses" ? "#f5a623" : "#94a3b8"} />
+          <Gift size={17} color={activeTab === "bonuses" ? "#f5a623" : "#94a3b8"} />
           <span>Free Bonuses</span>
           <span
             style={{
@@ -517,6 +607,66 @@ export default function WebsiteContentClient({ initialSettings }: WebsiteContent
             }}
           >
             {bonusItems.length}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("instructor")}
+          style={{
+            flex: "1 1 180px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.625rem",
+            padding: "0.875rem 1rem",
+            borderRadius: 10,
+            border: activeTab === "instructor" ? "1px solid rgba(245,166,35,0.4)" : "1px solid transparent",
+            background: activeTab === "instructor" ? "rgba(245,166,35,0.16)" : "transparent",
+            color: activeTab === "instructor" ? "#f5a623" : "#94a3b8",
+            fontWeight: activeTab === "instructor" ? 700 : 500,
+            fontSize: "0.875rem",
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+          }}
+        >
+          <UserCheck size={17} color={activeTab === "instructor" ? "#f5a623" : "#94a3b8"} />
+          <span>Your Instructor</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("faq")}
+          style={{
+            flex: "1 1 180px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.625rem",
+            padding: "0.875rem 1rem",
+            borderRadius: 10,
+            border: activeTab === "faq" ? "1px solid rgba(16,185,129,0.4)" : "1px solid transparent",
+            background: activeTab === "faq" ? "rgba(16,185,129,0.16)" : "transparent",
+            color: activeTab === "faq" ? "#10b981" : "#94a3b8",
+            fontWeight: activeTab === "faq" ? 700 : 500,
+            fontSize: "0.875rem",
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+          }}
+        >
+          <MessageSquare size={17} color={activeTab === "faq" ? "#10b981" : "#94a3b8"} />
+          <span>FAQ</span>
+          <span
+            style={{
+              background: activeTab === "faq" ? "#10b981" : "rgba(255,255,255,0.1)",
+              color: activeTab === "faq" ? "#0a0f1e" : "#fff",
+              padding: "0.15rem 0.5rem",
+              borderRadius: 9999,
+              fontSize: "0.75rem",
+              fontWeight: 700,
+            }}
+          >
+            {faqItems.length}
           </span>
         </button>
       </div>
@@ -1674,6 +1824,46 @@ export default function WebsiteContentClient({ initialSettings }: WebsiteContent
             </div>
           )}
         </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 3: YOUR INSTRUCTOR */}
+      {/* ========================================================================= */}
+      {activeTab === "instructor" && (
+        <InstructorTab
+          badge={instructorBadge}
+          setBadge={setInstructorBadge}
+          name={instructorName}
+          setName={setInstructorName}
+          bio={instructorBio}
+          setBio={setInstructorBio}
+          imageUrl={instructorImageUrl}
+          setImageUrl={setInstructorImageUrl}
+          ctaText={instructorCtaText}
+          setCtaText={setInstructorCtaText}
+          ctaLink={instructorCtaLink}
+          setCtaLink={setInstructorCtaLink}
+          credentials={instructorCredentials}
+          setCredentials={setInstructorCredentials}
+          stats={instructorStats}
+          setStats={setInstructorStats}
+          showPreview={showPreview}
+        />
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 4: FAQ */}
+      {/* ========================================================================= */}
+      {activeTab === "faq" && (
+        <FaqTab
+          badge={faqBadge}
+          setBadge={setFaqBadge}
+          title={faqTitle}
+          setTitle={setFaqTitle}
+          items={faqItems}
+          setItems={setFaqItems}
+          showPreview={showPreview}
+        />
       )}
 
       {/* Bottom Sticky Save Bar */}

@@ -2,20 +2,56 @@ import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 
-export default function InstructorSection() {
-  const credentials = [
-    "LinkedIn Top Voice with 150K+ followers",
-    "Built 9+ AI-powered workflows used daily by enterprise teams",
-    "Featured speaker at 150+ corporate AI workshops",
-    "Helped 500+ professionals land jobs & promotions using AI + LinkedIn",
-    "10+ years of training experience in tech & people skills",
-  ];
+export interface InstructorStat {
+  value: string;
+  label: string;
+}
 
-  const stats = [
-    { value: "12K+", label: "Trained" },
-    { value: "150+", label: "Workshops" },
-    { value: "4.9★", label: "Avg Rating" },
-  ];
+export interface InstructorSectionProps {
+  badge?: string;
+  name?: string;
+  bio?: string;
+  imageUrl?: string;
+  credentials?: string[];
+  stats?: InstructorStat[];
+  ctaText?: string;
+  ctaLink?: string;
+}
+
+const DEFAULT_CREDENTIALS = [
+  "LinkedIn Top Voice with 150K+ followers",
+  "Built 9+ AI-powered workflows used daily by enterprise teams",
+  "Featured speaker at 150+ corporate AI workshops",
+  "Helped 500+ professionals land jobs & promotions using AI + LinkedIn",
+  "10+ years of training experience in tech & people skills",
+];
+
+const DEFAULT_STATS: InstructorStat[] = [
+  { value: "12K+", label: "Trained" },
+  { value: "150+", label: "Workshops" },
+  { value: "4.9★", label: "Avg Rating" },
+];
+
+export default function InstructorSection({
+  badge,
+  name,
+  bio,
+  imageUrl,
+  credentials,
+  stats,
+  ctaText,
+  ctaLink,
+}: InstructorSectionProps = {}) {
+  const displayBadge = badge || "Your Instructor";
+  const displayName = name || "Meet Neeraj Kumar";
+  const displayBio =
+    bio ||
+    "Neeraj Kumar is India's leading AI & LinkedIn growth strategist. He has trained over 12,000 working professionals across the country to leverage AI tools and LinkedIn to build income streams — without writing a single line of code.";
+  const displayImage = imageUrl || "/neeraj-suit.jpg";
+  const displayCredentials = credentials && credentials.length > 0 ? credentials : DEFAULT_CREDENTIALS;
+  const displayStats = stats && stats.length > 0 ? stats : DEFAULT_STATS;
+  const displayCtaText = ctaText || "Learn from Neeraj";
+  const displayCtaLink = ctaLink || "/workshops";
 
   return (
     <section
@@ -42,7 +78,7 @@ export default function InstructorSection() {
               marginBottom: "1rem",
             }}
           >
-            Your Instructor
+            {displayBadge}
           </span>
           <h2
             style={{
@@ -53,7 +89,7 @@ export default function InstructorSection() {
               letterSpacing: "-0.02em",
             }}
           >
-            Meet Neeraj Kumar
+            {displayName}
           </h2>
         </div>
 
@@ -77,11 +113,11 @@ export default function InstructorSection() {
               }}
             >
               <Image
-                src="/neeraj-suit.jpg"
-                alt="Neeraj Kumar - Trainer & LinkedIn Influencer"
+                src={displayImage}
+                alt={displayName}
                 width={500}
                 height={600}
-                style={{ width: "100%", height: "auto", display: "block" }}
+                style={{ width: "100%", height: "auto", display: "block", objectFit: "cover" }}
               />
             </div>
 
@@ -89,14 +125,14 @@ export default function InstructorSection() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "1fr 1fr 1fr",
+                gridTemplateColumns: `repeat(${Math.min(displayStats.length, 3)}, 1fr)`,
                 gap: "0.75rem",
                 marginTop: "1.5rem",
               }}
             >
-              {stats.map((stat) => (
+              {displayStats.map((stat, i) => (
                 <div
-                  key={stat.label}
+                  key={`${stat.label}-${i}`}
                   style={{
                     background: "rgba(17,24,39,0.8)",
                     border: "1px solid rgba(255,255,255,0.06)",
@@ -116,15 +152,12 @@ export default function InstructorSection() {
 
           {/* Bio */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            <p style={{ color: "#94a3b8", fontSize: "1.0625rem", margin: 0, lineHeight: 1.7 }}>
-              Neeraj Kumar is India's leading AI & LinkedIn growth strategist. He has trained over{" "}
-              <strong style={{ color: "#f9fafb" }}>12,000 working professionals</strong> across the
-              country to leverage AI tools and LinkedIn to build income streams — without writing a
-              single line of code.
+            <p style={{ color: "#94a3b8", fontSize: "1.0625rem", margin: 0, lineHeight: 1.7, whiteSpace: "pre-line" }}>
+              {displayBio}
             </p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              {credentials.map((item, i) => (
+              {displayCredentials.map((item, i) => (
                 <div
                   key={i}
                   style={{
@@ -140,7 +173,7 @@ export default function InstructorSection() {
             </div>
 
             <Link
-              href="/courses"
+              href={displayCtaLink}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -157,7 +190,7 @@ export default function InstructorSection() {
                 transition: "all 0.2s",
               }}
             >
-              Learn from Neeraj <ArrowRight size={18} />
+              {displayCtaText} <ArrowRight size={18} />
             </Link>
           </div>
         </div>

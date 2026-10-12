@@ -96,6 +96,35 @@ export default async function HomePage() {
     bonusesItems = undefined;
   }
 
+  // Instructor from admin CMS
+  let instructorCredentials: string[] | undefined;
+  try {
+    instructorCredentials = settingsMap.instructor_credentials
+      ? JSON.parse(settingsMap.instructor_credentials)
+      : undefined;
+  } catch {
+    instructorCredentials = undefined;
+  }
+
+  let instructorStats: any[] | undefined;
+  try {
+    instructorStats = settingsMap.instructor_stats
+      ? JSON.parse(settingsMap.instructor_stats)
+      : undefined;
+  } catch {
+    instructorStats = undefined;
+  }
+
+  // FAQ from admin CMS
+  let faqItems: any[] | undefined;
+  try {
+    faqItems = settingsMap.faq_items
+      ? JSON.parse(settingsMap.faq_items)
+      : undefined;
+  } catch {
+    faqItems = undefined;
+  }
+
   return (
     <main style={{ background: "#0a0f1e", minHeight: "100vh" }}>
       {/* Ticker + Nav */}
@@ -141,12 +170,25 @@ export default async function HomePage() {
       <div className="section-divider" />
 
       {/* Instructor */}
-      <InstructorSection />
+      <InstructorSection
+        badge={settingsMap.instructor_badge}
+        name={settingsMap.instructor_name}
+        bio={settingsMap.instructor_bio}
+        imageUrl={settingsMap.instructor_image_url}
+        credentials={instructorCredentials}
+        stats={instructorStats}
+        ctaText={settingsMap.instructor_cta_text}
+        ctaLink={settingsMap.instructor_cta_link}
+      />
 
       <div className="section-divider" />
 
       {/* FAQ */}
-      <FAQSection />
+      <FAQSection
+        badge={settingsMap.faq_badge}
+        title={settingsMap.faq_title}
+        faqs={faqItems}
+      />
 
       {/* Footer */}
       <Footer />

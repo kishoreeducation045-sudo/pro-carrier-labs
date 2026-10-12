@@ -37,8 +37,23 @@ const FAQS = [
   },
 ];
 
-export default function FAQSection() {
+export interface FAQItem {
+  q: string;
+  a: string;
+}
+
+export interface FAQSectionProps {
+  badge?: string;
+  title?: string;
+  faqs?: FAQItem[];
+}
+
+export default function FAQSection({ badge, title, faqs }: FAQSectionProps = {}) {
   const [open, setOpen] = useState<number | null>(null);
+
+  const displayBadge = badge || "FAQ";
+  const displayTitle = title || "Questions, answered";
+  const displayFaqs = faqs && faqs.length > 0 ? faqs : FAQS;
 
   return (
     <section
@@ -65,7 +80,7 @@ export default function FAQSection() {
               marginBottom: "1rem",
             }}
           >
-            FAQ
+            {displayBadge}
           </span>
           <h2
             style={{
@@ -76,7 +91,7 @@ export default function FAQSection() {
               letterSpacing: "-0.02em",
             }}
           >
-            Questions, answered
+            {displayTitle}
           </h2>
         </div>
 
@@ -88,11 +103,11 @@ export default function FAQSection() {
             overflow: "hidden",
           }}
         >
-          {FAQS.map((faq, i) => (
+          {displayFaqs.map((faq, i) => (
             <div
               key={i}
               style={{
-                borderBottom: i < FAQS.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                borderBottom: i < displayFaqs.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
               }}
             >
               <button
