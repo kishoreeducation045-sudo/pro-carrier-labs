@@ -99,15 +99,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Sync role to auth app_metadata for fast token checks
+    try {
+      await adminSupabase.auth.admin.updateUserById(data.user.id, {
+        app_metadata: { role: assignedRole },
+      });
+    } catch {}
+
     const isAdmin =
       isAdminEmail(email) ||
       ["admin", "super_admin", "course_admin", "content_manager"].includes(assignedRole || "");
 
-    targetDestination = next && next !== "/dashboard" ? next : (isAdmin ? "/admin" : "/");
+    if (isAdmin) {
+      targetDestination = next && next.startsWith("/admin") ? next : "/admin";
+    } else {
+      targetDestination = "/";
+    }
   } catch (syncErr) {
     console.warn("[auth/callback] User sync warning:", syncErr);
     // Fall back to email-based role check
-    targetDestination = next && next !== "/dashboard" ? next : (isAdminEmail(email) ? "/admin" : "/");
+    const isAdmin = isAdminEmail(email);
+    targetDestination = isAdmin ? (next && next.startsWith("/admin") ? next : "/admin") : "/";
   }
 
   console.log(`[auth/callback] ${email} → ${targetDestination}`);

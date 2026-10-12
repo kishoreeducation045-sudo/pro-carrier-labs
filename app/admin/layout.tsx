@@ -25,11 +25,13 @@ export default async function AdminLayout({
 
   const isAdmin =
     isAdminEmail(user.email) ||
-    ["admin", "super_admin", "course_admin", "content_manager"].includes(profile?.role);
+    ["admin", "super_admin", "course_admin", "content_manager"].includes(profile?.role) ||
+    ["admin", "super_admin", "course_admin", "content_manager"].includes(user.app_metadata?.role) ||
+    ["admin", "super_admin", "course_admin", "content_manager"].includes(user.user_metadata?.role);
 
   if (!isAdmin) {
-    // If not admin, redirect to student dashboard
-    redirect("/dashboard");
+    // If not admin, redirect directly to main page
+    redirect("/");
   }
 
   return (

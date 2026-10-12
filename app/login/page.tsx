@@ -85,33 +85,49 @@ function LoginForm() {
       }
 
       if (data?.user) {
-        const destination = next && next !== "/dashboard" ? next : "/";
+        // Determine whether user is admin
+        let isAdmin =
+          isAdminEmail(data.user.email) ||
+          Boolean(
+            data.user.app_metadata?.role &&
+              ["admin", "super_admin", "course_admin", "content_manager"].includes(
+                data.user.app_metadata.role
+              )
+          ) ||
+          Boolean(
+            data.user.user_metadata?.role &&
+              ["admin", "super_admin", "course_admin", "content_manager"].includes(
+                data.user.user_metadata.role
+              )
+          );
 
-        if (isAdminEmail(data.user.email)) {
-          window.location.href = destination;
+        if (!isAdmin) {
+          // Check assigned role in public.users
+          try {
+            const { data: profile } = await supabase
+              .from("users")
+              .select("role")
+              .eq("id", data.user.id)
+              .single();
+
+            if (
+              profile &&
+              ["admin", "super_admin", "course_admin", "content_manager"].includes(profile.role)
+            ) {
+              isAdmin = true;
+            }
+          } catch {}
+        }
+
+        if (isAdmin) {
+          // When signed in with admin account, open the admin portal
+          const adminDest = next && next.startsWith("/admin") ? next : "/admin";
+          window.location.href = adminDest;
           return;
         }
 
-        // Check assigned role in public.users
-        try {
-          const { data: profile } = await supabase
-            .from("users")
-            .select("role")
-            .eq("id", data.user.id)
-            .single();
-
-          const isAdmin =
-            profile &&
-            ["admin", "super_admin", "course_admin", "content_manager"].includes(profile.role);
-
-          if (isAdmin) {
-            window.location.href = destination;
-            return;
-          }
-        } catch {}
-
-        // For all regular users, navigate to destination (main webpage by default)
-        window.location.href = destination;
+        // Anyone else (non-admin), directly to the main page
+        window.location.href = "/";
       } else {
         setError("Invalid credentials. Please try again.");
         setLoading(false);

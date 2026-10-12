@@ -61,7 +61,9 @@ export function truncate(str: string, length: number): string {
 /** Known admin emails — hardcoded fallback */
 const HARDCODED_ADMIN_EMAILS = [
   "admin@procareerlabs.com",
+  "mahalakshmi.education1589@gmail.com",
   "mahalakshmi.education8915@gmail.com",
+  "neeraj.4all.kr@gmail.com",
 ];
 
 /** All admin emails (hardcoded + from env NEXT_PUBLIC_ADMIN_EMAILS) */

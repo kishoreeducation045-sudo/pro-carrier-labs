@@ -59,10 +59,9 @@ export async function middleware(request: NextRequest) {
   const studentRoutes = ["/dashboard", "/my-courses", "/certificates"];
   const isStudentRoute = studentRoutes.some((r) => pathname.startsWith(r));
 
-  if (isStudentRoute && !effectiveUser) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("next", pathname);
-    return NextResponse.redirect(loginUrl);
+  if (isStudentRoute) {
+    // Workshops replaced legacy courses/dashboard — redirect directly to main page
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   // ── Protected admin routes ────────────────────────────────
@@ -74,18 +73,29 @@ export async function middleware(request: NextRequest) {
     }
 
     const email = effectiveUser.email || "";
-    const isSuperAdmin =
+    let isSuperAdmin =
       isAdminEmail(email) ||
-      (devUser && (devUser.role === "super_admin" || devUser.role === "admin"));
+      (devUser && (devUser.role === "super_admin" || devUser.role === "admin")) ||
+      (user?.app_metadata?.role &&
+        ["admin", "super_admin", "course_admin", "content_manager"].includes(
+          user.app_metadata.role
+        )) ||
+      (user?.user_metadata?.role &&
+        ["admin", "super_admin", "course_admin", "content_manager"].includes(
+          user.user_metadata.role
+        ));
 
     if (!isSuperAdmin && user && isSupabaseConfigured) {
       try {
+        const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
         const supabase = createServerClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          serviceKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
           {
             cookies: {
-              getAll() { return request.cookies.getAll(); },
+              getAll() {
+                return request.cookies.getAll();
+              },
               setAll() {},
             },
           }
@@ -97,26 +107,70 @@ export async function middleware(request: NextRequest) {
           .single();
 
         if (
-          !profile ||
-          !["admin", "super_admin", "course_admin", "content_manager"].includes(profile.role)
+          profile &&
+          ["admin", "super_admin", "course_admin", "content_manager"].includes(
+            profile.role
+          )
         ) {
-          return NextResponse.redirect(new URL("/dashboard", request.url));
+          isSuperAdmin = true;
         }
-      } catch {
-        // If DB fails, allow through if dev admin
-        if (!devUser) return NextResponse.redirect(new URL("/dashboard", request.url));
-      }
+      } catch {}
+    }
+
+    if (!isSuperAdmin) {
+      // Non-admin credentials redirect directly to main page
+      return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
   // ── Redirect logged-in users away from auth pages ─────────
   if ((pathname === "/login" || pathname === "/signup") && effectiveUser) {
     const email = effectiveUser.email || "";
-    const isSuperAdmin =
+    let isSuperAdmin =
       isAdminEmail(email) ||
-      (devUser && (devUser.role === "super_admin" || devUser.role === "admin"));
+      (devUser && (devUser.role === "super_admin" || devUser.role === "admin")) ||
+      (user?.app_metadata?.role &&
+        ["admin", "super_admin", "course_admin", "content_manager"].includes(
+          user.app_metadata.role
+        )) ||
+      (user?.user_metadata?.role &&
+        ["admin", "super_admin", "course_admin", "content_manager"].includes(
+          user.user_metadata.role
+        ));
 
-    const dest = isSuperAdmin ? "/admin" : "/dashboard";
+    if (!isSuperAdmin && user && isSupabaseConfigured) {
+      try {
+        const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        const supabase = createServerClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          serviceKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          {
+            cookies: {
+              getAll() {
+                return request.cookies.getAll();
+              },
+              setAll() {},
+            },
+          }
+        );
+        const { data: profile } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        if (
+          profile &&
+          ["admin", "super_admin", "course_admin", "content_manager"].includes(
+            profile.role
+          )
+        ) {
+          isSuperAdmin = true;
+        }
+      } catch {}
+    }
+
+    const dest = isSuperAdmin ? "/admin" : "/";
     return NextResponse.redirect(new URL(dest, request.url));
   }
 

@@ -12,9 +12,20 @@ export default function Navbar() {
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(async ({ data }) => {
       if (data.user) {
-        setUser(data.user);
+        let fullUser: any = { ...data.user };
+        try {
+          const { data: profile } = await supabase
+            .from("users")
+            .select("role")
+            .eq("id", data.user.id)
+            .single();
+          if (profile?.role) {
+            fullUser.role = profile.role;
+          }
+        } catch {}
+        setUser(fullUser);
       } else {
         // Check dev auth cookie
         const match = document.cookie.match(/pcl_dev_auth=([^;]+)/);
@@ -143,6 +154,12 @@ export default function Navbar() {
                 const isAdmin =
                   user.role === "super_admin" ||
                   user.role === "admin" ||
+                  user.role === "course_admin" ||
+                  user.role === "content_manager" ||
+                  user.app_metadata?.role === "super_admin" ||
+                  user.app_metadata?.role === "admin" ||
+                  user.user_metadata?.role === "super_admin" ||
+                  user.user_metadata?.role === "admin" ||
                   isAdminEmail(user.email);
                 if (isAdmin) {
                   return (
