@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Save,
   CheckCircle2,
@@ -21,6 +21,7 @@ import {
   Eye,
   UserCheck,
   MessageSquare,
+  Sliders,
 } from "lucide-react";
 import InstructorTab, {
   InstructorStat,
@@ -28,6 +29,7 @@ import InstructorTab, {
   DEFAULT_INSTRUCTOR_STATS,
 } from "./InstructorTab";
 import FaqTab, { FAQItem, DEFAULT_FAQS } from "./FaqTab";
+import SiteTickerTab from "./SiteTickerTab";
 
 interface BonusItem {
   title: string;
@@ -82,7 +84,23 @@ const DEFAULT_BONUSES: BonusItem[] = [
 
 export default function WebsiteContentClient({ initialSettings }: WebsiteContentClientProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"pain_points" | "bonuses" | "instructor" | "faq">("pain_points");
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<
+    "pain_points" | "bonuses" | "instructor" | "faq" | "site_settings"
+  >("pain_points");
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam === "site-settings" || tabParam === "site_settings") {
+      setActiveTab("site_settings");
+    } else if (tabParam === "instructor") {
+      setActiveTab("instructor");
+    } else if (tabParam === "faq") {
+      setActiveTab("faq");
+    } else if (tabParam === "bonuses") {
+      setActiveTab("bonuses");
+    }
+  }, [searchParams]);
 
   // --- Pain Points State ---
   const [painBadge, setPainBadge] = useState(
@@ -668,6 +686,30 @@ export default function WebsiteContentClient({ initialSettings }: WebsiteContent
           >
             {faqItems.length}
           </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("site_settings")}
+          style={{
+            flex: "1 1 190px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.625rem",
+            padding: "0.875rem 1rem",
+            borderRadius: 10,
+            border: activeTab === "site_settings" ? "1px solid rgba(59,130,246,0.4)" : "1px solid transparent",
+            background: activeTab === "site_settings" ? "rgba(59,130,246,0.18)" : "transparent",
+            color: activeTab === "site_settings" ? "#60a5fa" : "#94a3b8",
+            fontWeight: activeTab === "site_settings" ? 700 : 500,
+            fontSize: "0.875rem",
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+          }}
+        >
+          <Sliders size={17} color={activeTab === "site_settings" ? "#60a5fa" : "#94a3b8"} />
+          <span>Site & Ticker Settings</span>
         </button>
       </div>
 
@@ -1866,55 +1908,64 @@ export default function WebsiteContentClient({ initialSettings }: WebsiteContent
         />
       )}
 
-      {/* Bottom Sticky Save Bar */}
-      <div
-        style={{
-          position: "sticky",
-          bottom: "1.5rem",
-          marginTop: "3rem",
-          background: "rgba(17, 24, 39, 0.95)",
-          backdropFilter: "blur(12px)",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
-          borderRadius: 16,
-          padding: "1rem 1.5rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
-          zIndex: 50,
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <Sparkles size={18} color="#60a5fa" />
-          <span style={{ color: "#cbd5e1", fontSize: "0.875rem", fontWeight: 500 }}>
-            Ready to apply changes to marketing pages?
-          </span>
-        </div>
+      {/* ========================================================================= */}
+      {/* TAB 5: SITE & TICKER SETTINGS */}
+      {/* ========================================================================= */}
+      {activeTab === "site_settings" && (
+        <SiteTickerTab initialSettings={initialSettings} />
+      )}
 
-        <button
-          type="button"
-          onClick={handleSaveAll}
-          disabled={saving}
+      {/* Bottom Sticky Save Bar (only for CMS tabs that share Save All Changes) */}
+      {activeTab !== "site_settings" && (
+        <div
           style={{
-            display: "inline-flex",
+            position: "sticky",
+            bottom: "1.5rem",
+            marginTop: "3rem",
+            background: "rgba(17, 24, 39, 0.95)",
+            backdropFilter: "blur(12px)",
+            border: "1px solid rgba(255, 255, 255, 0.12)",
+            borderRadius: 16,
+            padding: "1rem 1.5rem",
+            display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
-            gap: "0.5rem",
-            background: "#1e6fff",
-            border: "none",
-            color: "#fff",
-            fontWeight: 700,
-            fontSize: "0.875rem",
-            padding: "0.625rem 1.5rem",
-            borderRadius: 10,
-            cursor: saving ? "not-allowed" : "pointer",
-            boxShadow: "0 4px 14px rgba(30,111,255,0.4)",
-            opacity: saving ? 0.7 : 1,
+            boxShadow: "0 10px 25px -5px rgba(0,0,0,0.5)",
+            zIndex: 50,
           }}
         >
-          {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-          {saving ? "Saving Changes..." : "Save All Changes"}
-        </button>
-      </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <Sparkles size={18} color="#60a5fa" />
+            <span style={{ color: "#cbd5e1", fontSize: "0.875rem", fontWeight: 500 }}>
+              Ready to apply changes to marketing pages?
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleSaveAll}
+            disabled={saving}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              background: "#1e6fff",
+              border: "none",
+              color: "#fff",
+              fontWeight: 700,
+              fontSize: "0.875rem",
+              padding: "0.625rem 1.5rem",
+              borderRadius: 10,
+              cursor: saving ? "not-allowed" : "pointer",
+              boxShadow: "0 4px 14px rgba(30,111,255,0.4)",
+              opacity: saving ? 0.7 : 1,
+            }}
+          >
+            {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+            {saving ? "Saving Changes..." : "Save All Changes"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

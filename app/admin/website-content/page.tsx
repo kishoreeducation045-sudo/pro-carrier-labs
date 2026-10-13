@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { createAdminClient } from "@/lib/supabase/server";
 import WebsiteContentClient from "./WebsiteContentClient";
 
@@ -20,5 +21,9 @@ export default async function WebsiteContentPage() {
     settingsList.map((s) => [s.key, s.value])
   );
 
-  return <WebsiteContentClient initialSettings={settingsMap} />;
+  return (
+    <Suspense fallback={<div style={{ padding: "2rem", color: "#94a3b8" }}>Loading Website Content...</div>}>
+      <WebsiteContentClient initialSettings={settingsMap} />
+    </Suspense>
+  );
 }
