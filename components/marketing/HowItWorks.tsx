@@ -27,7 +27,7 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <section style={{ padding: "5rem 1.5rem" }}>
+    <section className="how-it-works-section" style={{ padding: "5rem 1.5rem" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
           <span
@@ -61,9 +61,10 @@ export default function HowItWorks() {
         </div>
 
         <div
+          className="how-it-works-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
             gap: "2rem",
             position: "relative",
           }}
@@ -154,6 +155,14 @@ export default function HowItWorks() {
           ))}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .how-it-works-section {
+            padding: 3.5rem 1rem !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

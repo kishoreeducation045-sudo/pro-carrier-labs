@@ -92,11 +92,12 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
-        paddingTop: 120,
+        paddingTop: 135,
         paddingBottom: 80,
         position: "relative",
         overflow: "hidden",
       }}
+      className="hero-section-container"
     >
       {/* Background gradient blobs */}
       <div
@@ -131,7 +132,7 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
           padding: "0 1.5rem",
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
-          gap: "4rem",
+          gap: "3.5rem",
           alignItems: "center",
           width: "100%",
         }}
@@ -174,9 +175,9 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
           <h1
             className="reveal"
             style={{
-              fontSize: "clamp(2.5rem, 5vw, 4rem)",
+              fontSize: "clamp(1.85rem, 5.5vw, 3.75rem)",
               fontWeight: 900,
-              lineHeight: 1.1,
+              lineHeight: 1.15,
               letterSpacing: "-0.03em",
               color: "#f9fafb",
               margin: 0,
@@ -217,11 +218,11 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
           <p
             className="reveal"
             style={{
-              fontSize: "1.125rem",
+              fontSize: "clamp(0.95rem, 2.5vw, 1.125rem)",
               color: "#94a3b8",
               margin: 0,
               transitionDelay: "240ms",
-              lineHeight: 1.7,
+              lineHeight: 1.6,
             }}
           >
             {heroContent?.subheadline || "Without quitting their job or knowing how to code."}
@@ -229,7 +230,7 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
 
           {/* Session info card */}
           <div
-            className="reveal"
+            className="reveal hero-session-card"
             style={{
               background: "rgba(17,24,39,0.8)",
               border: "1px solid rgba(255,255,255,0.08)",
@@ -260,7 +261,7 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
                 <p style={{ color: "#64748b", fontSize: "0.75rem", margin: 0, marginBottom: 2 }}>
                   {item.label}
                 </p>
-                <p style={{ color: "#f9fafb", fontWeight: 700, fontSize: "0.9375rem", margin: 0 }}>
+                <p style={{ color: "#f9fafb", fontWeight: 700, fontSize: "clamp(0.8125rem, 2vw, 0.9375rem)", margin: 0 }}>
                   {item.value}
                 </p>
               </div>
@@ -269,7 +270,7 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
 
           {/* CTA Buttons */}
           <div
-            className="reveal"
+            className="reveal hero-cta-group"
             style={{
               display: "flex",
               alignItems: "center",
@@ -280,6 +281,7 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
           >
             <Link
               href="/workshops"
+              className="hero-cta-btn"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -384,6 +386,7 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
 
           {/* Floating students badge */}
           <div
+            className="hero-badge-students"
             style={{
               position: "absolute",
               bottom: 32,
@@ -396,7 +399,7 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
               boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
             }}
           >
-            <p style={{ color: "#f5a623", fontWeight: 800, fontSize: "1.5rem", margin: 0 }}>
+            <p style={{ color: "#f5a623", fontWeight: 800, fontSize: "clamp(1.15rem, 3vw, 1.5rem)", margin: 0 }}>
               {studentsCount}
             </p>
             <p style={{ color: "#94a3b8", fontSize: "0.75rem", margin: 0 }}>{studentsLabel}</p>
@@ -404,6 +407,7 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
 
           {/* Floating rating badge */}
           <div
+            className="hero-badge-rating"
             style={{
               position: "absolute",
               top: 24,
@@ -416,7 +420,7 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
               boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
             }}
           >
-            <p style={{ color: "#fbbf24", fontWeight: 800, fontSize: "1.25rem", margin: 0 }}>
+            <p style={{ color: "#fbbf24", fontWeight: 800, fontSize: "clamp(1rem, 2.5vw, 1.25rem)", margin: 0 }}>
               ⭐ {ratingValue}
             </p>
             <p style={{ color: "#94a3b8", fontSize: "0.75rem", margin: 0 }}>{ratingLabel}</p>
@@ -426,9 +430,37 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
 
       <style>{`
         @media (max-width: 768px) {
+          .hero-section-container {
+            padding-top: 115px !important;
+            padding-bottom: 50px !important;
+          }
           .hero-grid {
             grid-template-columns: 1fr !important;
-            gap: 2rem !important;
+            gap: 2.25rem !important;
+          }
+          .hero-badge-students {
+            left: 12px !important;
+            bottom: 16px !important;
+            padding: 0.75rem 1rem !important;
+          }
+          .hero-badge-rating {
+            right: 12px !important;
+            top: 16px !important;
+            padding: 0.65rem 1rem !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .hero-session-card {
+            padding: 0.875rem 0.5rem !important;
+            gap: 0.5rem !important;
+          }
+          .hero-cta-group {
+            flex-direction: column !important;
+            align-items: stretch !important;
+          }
+          .hero-cta-btn {
+            width: 100% !important;
+            justify-content: center !important;
           }
         }
       `}</style>

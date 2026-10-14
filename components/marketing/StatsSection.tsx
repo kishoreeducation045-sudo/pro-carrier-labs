@@ -66,6 +66,7 @@ function AnimatedStat({ value, label, icon }: { value: string; label: string; ic
   return (
     <div
       ref={ref}
+      className="stat-card"
       style={{
         background: "rgba(17,24,39,0.8)",
         border: "1px solid rgba(255,255,255,0.06)",
@@ -85,6 +86,7 @@ function AnimatedStat({ value, label, icon }: { value: string; label: string; ic
       }}
     >
       <div
+        className="stat-icon-wrapper"
         style={{
           width: 48,
           height: 48,
@@ -102,7 +104,7 @@ function AnimatedStat({ value, label, icon }: { value: string; label: string; ic
       </div>
       <p
         style={{
-          fontSize: "2.25rem",
+          fontSize: "clamp(1.5rem, 3.5vw, 2.25rem)",
           fontWeight: 900,
           color: "#1e6fff",
           margin: "0 0 0.25rem",
@@ -123,9 +125,10 @@ export default function StatsSection({ stat1, stat2, stat3, stat4 }: StatsSectio
   }));
 
   return (
-    <section style={{ padding: "5rem 1.5rem" }}>
+    <section className="stats-section-wrap" style={{ padding: "5rem 1.5rem" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
         <div
+          className="stats-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
@@ -137,6 +140,31 @@ export default function StatsSection({ stat1, stat2, stat3, stat4 }: StatsSectio
           ))}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .stats-section-wrap {
+            padding: 3rem 1rem !important;
+          }
+          .stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.85rem !important;
+          }
+          .stat-card {
+            padding: 1.25rem 0.75rem !important;
+          }
+          .stat-icon-wrapper {
+            width: 40px !important;
+            height: 40px !important;
+            margin-bottom: 0.75rem !important;
+          }
+        }
+        @media (max-width: 360px) {
+          .stats-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

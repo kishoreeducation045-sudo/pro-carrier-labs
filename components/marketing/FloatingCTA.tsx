@@ -34,6 +34,7 @@ export default function FloatingCTA({ cohort }: FloatingCTAProps) {
 
   return (
     <div
+      className="floating-cta-bar"
       style={{
         position: "fixed",
         bottom: 0,
@@ -51,14 +52,14 @@ export default function FloatingCTA({ cohort }: FloatingCTAProps) {
         animation: "fade-up 0.3s ease",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: "1rem", flex: 1 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flex: 1, minWidth: 0 }}>
         <div>
-          <p style={{ color: "#f9fafb", fontWeight: 700, margin: 0, fontSize: "0.9375rem" }}>
+          <p style={{ color: "#f9fafb", fontWeight: 700, margin: 0, fontSize: "clamp(0.8125rem, 2vw, 0.9375rem)" }}>
             Only{" "}
             <span style={{ color: "#f5a623" }}>{seatsLeft} seats left</span> at{" "}
             <span style={{ color: "#1e6fff" }}>₹{price}</span>
           </p>
-          <p style={{ color: "#64748b", margin: 0, fontSize: "0.8125rem" }}>
+          <p className="floating-cta-sub" style={{ color: "#64748b", margin: 0, fontSize: "0.75rem" }}>
             Price increases after seats fill
           </p>
         </div>
@@ -66,15 +67,16 @@ export default function FloatingCTA({ cohort }: FloatingCTAProps) {
 
       <Link
         href="/#cohort"
+        className="floating-cta-btn"
         style={{
           display: "inline-flex",
           alignItems: "center",
-          gap: "0.5rem",
+          gap: "0.35rem",
           background: "#f5a623",
           color: "#0a0f1e",
           fontWeight: 800,
-          fontSize: "0.9375rem",
-          padding: "0.75rem 1.5rem",
+          fontSize: "0.875rem",
+          padding: "0.65rem 1.25rem",
           borderRadius: 9999,
           textDecoration: "none",
           whiteSpace: "nowrap",
@@ -82,7 +84,7 @@ export default function FloatingCTA({ cohort }: FloatingCTAProps) {
           boxShadow: "0 0 24px rgba(245,166,35,0.35)",
         }}
       >
-        Enroll Now <ArrowRight size={16} />
+        Enroll Now <ArrowRight size={15} />
       </Link>
 
       <button
@@ -95,9 +97,26 @@ export default function FloatingCTA({ cohort }: FloatingCTAProps) {
           padding: "0.25rem",
           flexShrink: 0,
         }}
+        aria-label="Dismiss banner"
       >
-        <X size={20} />
+        <X size={18} />
       </button>
+
+      <style>{`
+        @media (max-width: 480px) {
+          .floating-cta-bar {
+            padding: 0.65rem 0.85rem !important;
+            gap: 0.5rem !important;
+          }
+          .floating-cta-btn {
+            padding: 0.55rem 0.85rem !important;
+            font-size: 0.8125rem !important;
+          }
+          .floating-cta-sub {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

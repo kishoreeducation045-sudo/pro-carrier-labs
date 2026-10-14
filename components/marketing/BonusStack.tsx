@@ -144,6 +144,7 @@ export default function BonusStack({
           {displayBonuses.map((bonus, i) => (
             <div
               key={i}
+              className="bonus-card-item"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -191,7 +192,7 @@ export default function BonusStack({
                 />
               </div>
 
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <p style={{ color: "#f9fafb", fontWeight: 700, margin: "0 0 0.25rem", fontSize: "1rem" }}>
                   {bonus.title}
                 </p>
@@ -214,6 +215,7 @@ export default function BonusStack({
                     padding: "0.2rem 0.5rem",
                     borderRadius: 9999,
                     margin: 0,
+                    display: "inline-block",
                   }}
                 >
                   FREE
@@ -225,6 +227,7 @@ export default function BonusStack({
 
         {/* Total */}
         <div
+          className="bonus-total-card"
           style={{
             marginTop: "1.5rem",
             padding: "1.25rem 1.5rem",
@@ -244,6 +247,21 @@ export default function BonusStack({
           </span>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 480px) {
+          .bonus-card-item {
+            padding: 1rem 0.85rem !important;
+            gap: 0.85rem !important;
+          }
+          .bonus-total-card {
+            flex-direction: column !important;
+            gap: 0.5rem !important;
+            text-align: center !important;
+            padding: 1rem !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -142,6 +142,7 @@ export default function CourseCatalog({ courses = DEFAULT_COURSES }: CourseCatal
   return (
     <section
       id="workshops"
+      className="course-catalog-section"
       style={{
         padding: "5rem 1.5rem",
         background: "linear-gradient(180deg, #0a0f1e 0%, #0d1526 100%)",
@@ -249,9 +250,10 @@ export default function CourseCatalog({ courses = DEFAULT_COURSES }: CourseCatal
         {/* Courses Container: Horizontal Scroll if > 4, or Grid if <= 4 */}
         <div
           ref={scrollRef}
+          className="course-catalog-container"
           style={{
             display: isHorizontalScroll ? "flex" : "grid",
-            gridTemplateColumns: isHorizontalScroll ? undefined : "repeat(auto-fill, minmax(270px, 1fr))",
+            gridTemplateColumns: isHorizontalScroll ? undefined : "repeat(auto-fill, minmax(240px, 1fr))",
             gap: "1.5rem",
             overflowX: isHorizontalScroll ? "auto" : "visible",
             scrollSnapType: isHorizontalScroll ? "x mandatory" : undefined,
@@ -436,6 +438,14 @@ export default function CourseCatalog({ courses = DEFAULT_COURSES }: CourseCatal
           ))}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .course-catalog-section {
+            padding: 3.5rem 1rem !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

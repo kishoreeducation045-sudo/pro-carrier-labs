@@ -42,7 +42,7 @@ export default async function WorkshopDetailPage({
     <div style={{ minHeight: "100vh", background: "#0a0f1e", color: "#f9fafb" }}>
       <Navbar />
 
-      <main style={{ maxWidth: 1200, margin: "0 auto", padding: "3rem 1.5rem 6rem" }}>
+      <main className="workshop-main-container" style={{ maxWidth: 1200, margin: "0 auto", padding: "8.5rem 1.5rem 6rem" }}>
         {/* Workshop Hero Grid */}
         <div
           style={{
@@ -281,6 +281,20 @@ export default async function WorkshopDetailPage({
           </div>
         </div>
       </main>
+
+      <style>{`
+        @media (max-width: 868px) {
+          .workshop-main-container {
+            padding-top: 6.5rem !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+          }
+          .course-detail-grid {
+            grid-template-columns: 1fr !important;
+            gap: 2rem !important;
+          }
+        }
+      `}</style>
 
       <Footer />
     </div>

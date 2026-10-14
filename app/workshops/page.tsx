@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Navbar from "@/components/marketing/Navbar";
 import Footer from "@/components/marketing/Footer";
-import MarqueeTicker from "@/components/marketing/MarqueeTicker";
 import { createAdminClient } from "@/lib/supabase/server";
 import { Clock, ArrowRight, CheckCircle2 } from "lucide-react";
 
@@ -49,10 +48,9 @@ export default async function WorkshopsCatalogPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#0a0f1e", color: "#f9fafb" }}>
-      <MarqueeTicker items={tickerItems} />
-      <Navbar />
+      <Navbar tickerItems={tickerItems} />
 
-      <main style={{ maxWidth: 1280, margin: "0 auto", padding: "4rem 1.5rem 6rem" }}>
+      <main className="workshops-page-main" style={{ maxWidth: 1280, margin: "0 auto", padding: "8.5rem 1.5rem 6rem" }}>
         {/* Header */}
         <div style={{ textAlign: "center", maxWidth: 800, margin: "0 auto 4rem" }}>
           <span
@@ -81,7 +79,7 @@ export default async function WorkshopsCatalogPage() {
         </div>
 
         {/* Workshops Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "2rem" }}>
+        <div className="workshops-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "2rem" }}>
           {workshops.map((workshop) => {
             const features = Array.isArray(workshop.features) ? workshop.features : [];
             const originalPrice = workshop.original_price_inr || 2999;
@@ -198,6 +196,20 @@ export default async function WorkshopsCatalogPage() {
           })}
         </div>
       </main>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .workshops-page-main {
+            padding-top: 6.5rem !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+          }
+          .workshops-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.25rem !important;
+          }
+        }
+      `}</style>
 
       <Footer />
     </div>

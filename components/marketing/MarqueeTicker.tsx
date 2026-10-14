@@ -23,10 +23,11 @@ export default function MarqueeTicker({ items = DEFAULT_ITEMS }: MarqueeTickerPr
       style={{
         background: "linear-gradient(90deg, #1e6fff, #1658d4)",
         overflow: "hidden",
-        padding: "0.625rem 0",
+        padding: "0.45rem 0",
         position: "relative",
-        zIndex: 51,
+        borderBottom: "1px solid rgba(255,255,255,0.12)",
       }}
+      className="marquee-container"
     >
       <div
         style={{
@@ -45,15 +46,27 @@ export default function MarqueeTicker({ items = DEFAULT_ITEMS }: MarqueeTickerPr
               fontSize: "0.8125rem",
               fontWeight: 600,
               color: "#ffffff",
-              padding: "0 2.5rem",
+              padding: "0 1.75rem",
               gap: "0.5rem",
             }}
+            className="marquee-item"
           >
             {item}
-            <span style={{ color: "rgba(255,255,255,0.4)", marginLeft: "1.5rem" }}>•</span>
+            <span style={{ color: "rgba(255,255,255,0.4)", marginLeft: "1.25rem" }}>•</span>
           </span>
         ))}
       </div>
+      <style jsx>{`
+        @media (max-width: 640px) {
+          .marquee-container {
+            padding: 0.35rem 0 !important;
+          }
+          .marquee-item {
+            font-size: 0.75rem !important;
+            padding: 0 1.25rem !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

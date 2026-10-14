@@ -174,6 +174,7 @@ export default function InstructorSection({
 
             <Link
               href={displayCtaLink}
+              className="instructor-cta-btn"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -201,6 +202,13 @@ export default function InstructorSection({
           .instructor-grid {
             grid-template-columns: 1fr !important;
             gap: 2rem !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .instructor-cta-btn {
+            width: 100% !important;
+            justify-content: center !important;
+            align-self: stretch !important;
           }
         }
       `}</style>

@@ -25,21 +25,21 @@ function CountdownBox({ value, label }: { value: number; label: string }) {
         flexDirection: "column",
         alignItems: "center",
         gap: "0.25rem",
-        minWidth: 72,
       }}
     >
       <div
+        className="countdown-digit-box"
         style={{
           background: "rgba(30,111,255,0.12)",
           border: "1px solid rgba(30,111,255,0.25)",
           borderRadius: 12,
-          padding: "1rem 1.25rem",
+          padding: "1rem 1.15rem",
           fontWeight: 800,
           fontSize: "2rem",
           color: "#f9fafb",
           lineHeight: 1,
           fontVariantNumeric: "tabular-nums",
-          minWidth: 72,
+          minWidth: 68,
           textAlign: "center",
         }}
       >
@@ -79,6 +79,7 @@ export default function FeaturedCohort({ cohort }: FeaturedCohortProps) {
         padding: "5rem 1.5rem",
         background: "linear-gradient(180deg, #0a0f1e 0%, #0d1526 50%, #0a0f1e 100%)",
       }}
+      className="featured-cohort-section"
     >
       <div style={{ maxWidth: 900, margin: "0 auto" }}>
         {/* Section label */}
@@ -104,7 +105,7 @@ export default function FeaturedCohort({ cohort }: FeaturedCohortProps) {
           </span>
           <h2
             style={{
-              fontSize: "clamp(2rem, 4vw, 3rem)",
+              fontSize: "clamp(1.75rem, 4vw, 3rem)",
               fontWeight: 800,
               color: "#f9fafb",
               margin: "1rem 0 0.5rem",
@@ -120,6 +121,7 @@ export default function FeaturedCohort({ cohort }: FeaturedCohortProps) {
 
         {/* Main cohort card */}
         <div
+          className="featured-cohort-card"
           style={{
             background: "rgba(17,24,39,0.9)",
             border: "1px solid rgba(30,111,255,0.2)",
@@ -133,13 +135,13 @@ export default function FeaturedCohort({ cohort }: FeaturedCohortProps) {
             <p style={{ color: "#64748b", fontSize: "0.8125rem", fontWeight: 600, marginBottom: "1rem", letterSpacing: "0.05em", textTransform: "uppercase" }}>
               {countdown.expired ? "Cohort has started" : "Cohort starts in"}
             </p>
-            <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
+            <div className="countdown-wrap" style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "0.85rem", flexWrap: "wrap" }}>
               <CountdownBox value={countdown.days} label="Days" />
-              <div style={{ color: "#1e6fff", fontSize: "2rem", fontWeight: 800, alignSelf: "flex-start", paddingTop: "0.75rem" }}>:</div>
+              <div className="countdown-colon" style={{ color: "#1e6fff", fontSize: "1.75rem", fontWeight: 800, alignSelf: "flex-start", paddingTop: "0.75rem" }}>:</div>
               <CountdownBox value={countdown.hours} label="Hours" />
-              <div style={{ color: "#1e6fff", fontSize: "2rem", fontWeight: 800, alignSelf: "flex-start", paddingTop: "0.75rem" }}>:</div>
+              <div className="countdown-colon" style={{ color: "#1e6fff", fontSize: "1.75rem", fontWeight: 800, alignSelf: "flex-start", paddingTop: "0.75rem" }}>:</div>
               <CountdownBox value={countdown.minutes} label="Mins" />
-              <div style={{ color: "#1e6fff", fontSize: "2rem", fontWeight: 800, alignSelf: "flex-start", paddingTop: "0.75rem" }}>:</div>
+              <div className="countdown-colon" style={{ color: "#1e6fff", fontSize: "1.75rem", fontWeight: 800, alignSelf: "flex-start", paddingTop: "0.75rem" }}>:</div>
               <CountdownBox value={countdown.seconds} label="Secs" />
             </div>
           </div>
@@ -149,6 +151,7 @@ export default function FeaturedCohort({ cohort }: FeaturedCohortProps) {
 
           {/* Pricing & Seats */}
           <div
+            className="cohort-meta-grid"
             style={{
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
@@ -159,8 +162,8 @@ export default function FeaturedCohort({ cohort }: FeaturedCohortProps) {
             {/* Price */}
             <div>
               <p style={{ color: "#64748b", fontSize: "0.8125rem", fontWeight: 600, margin: "0 0 0.5rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Investment</p>
-              <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem" }}>
-                <span style={{ fontSize: "2.5rem", fontWeight: 900, color: "#f9fafb" }}>₹{price}</span>
+              <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", flexWrap: "wrap" }}>
+                <span style={{ fontSize: "clamp(2rem, 4vw, 2.5rem)", fontWeight: 900, color: "#f9fafb" }}>₹{price}</span>
                 <span style={{ fontSize: "1rem", color: "#64748b", textDecoration: "line-through" }}>₹{originalPrice}</span>
                 <span style={{ background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.3)", color: "#10b981", fontSize: "0.75rem", fontWeight: 700, padding: "0.2rem 0.5rem", borderRadius: 9999 }}>
                   {discount}% OFF
@@ -208,6 +211,7 @@ export default function FeaturedCohort({ cohort }: FeaturedCohortProps) {
               boxShadow: "0 0 30px rgba(30,111,255,0.4)",
               transition: "all 0.2s",
               marginBottom: "1rem",
+              textAlign: "center",
             }}
           >
             Reserve My Seat — ₹{price} Only
@@ -220,6 +224,35 @@ export default function FeaturedCohort({ cohort }: FeaturedCohortProps) {
           </p>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .featured-cohort-section {
+            padding: 3.5rem 1rem !important;
+          }
+          .featured-cohort-card {
+            padding: 1.35rem 1rem !important;
+            border-radius: 18px !important;
+          }
+          .countdown-wrap {
+            gap: 0.35rem !important;
+          }
+          .countdown-digit-box {
+            min-width: 52px !important;
+            padding: 0.65rem 0.5rem !important;
+            font-size: 1.35rem !important;
+            border-radius: 10px !important;
+          }
+          .countdown-colon {
+            font-size: 1.25rem !important;
+            padding-top: 0.4rem !important;
+          }
+          .cohort-meta-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.25rem !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -58,6 +58,7 @@ export default function FAQSection({ badge, title, faqs }: FAQSectionProps = {})
   return (
     <section
       id="faq"
+      className="faq-section-wrap"
       style={{
         padding: "5rem 1.5rem",
         background: "linear-gradient(180deg, #0a0f1e 0%, #0d1526 100%)",
@@ -111,6 +112,7 @@ export default function FAQSection({ badge, title, faqs }: FAQSectionProps = {})
               }}
             >
               <button
+                className="faq-toggle-btn"
                 onClick={() => setOpen(open === i ? null : i)}
                 style={{
                   width: "100%",
@@ -144,12 +146,13 @@ export default function FAQSection({ badge, title, faqs }: FAQSectionProps = {})
 
               <div
                 style={{
-                  maxHeight: open === i ? 300 : 0,
+                  maxHeight: open === i ? 400 : 0,
                   overflow: "hidden",
                   transition: "max-height 0.3s ease",
                 }}
               >
                 <p
+                  className="faq-answer-text"
                   style={{
                     padding: "0 1.75rem 1.375rem",
                     color: "#94a3b8",
@@ -165,6 +168,22 @@ export default function FAQSection({ badge, title, faqs }: FAQSectionProps = {})
           ))}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .faq-section-wrap {
+            padding: 3.5rem 1rem !important;
+          }
+          .faq-toggle-btn {
+            padding: 1.15rem 1rem !important;
+            font-size: 0.9375rem !important;
+          }
+          .faq-answer-text {
+            padding: 0 1rem 1.15rem !important;
+            font-size: 0.875rem !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

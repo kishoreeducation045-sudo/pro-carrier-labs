@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import Navbar from "@/components/marketing/Navbar";
-import MarqueeTicker from "@/components/marketing/MarqueeTicker";
 import HeroSection from "@/components/marketing/HeroSection";
 import FeaturedCohort from "@/components/marketing/FeaturedCohort";
 import StatsSection from "@/components/marketing/StatsSection";
@@ -127,9 +126,8 @@ export default async function HomePage() {
 
   return (
     <main style={{ background: "#0a0f1e", minHeight: "100vh" }}>
-      {/* Ticker + Nav */}
-      <MarqueeTicker items={tickerItems} />
-      <Navbar />
+      {/* Unified Ticker + Nav Header */}
+      <Navbar tickerItems={tickerItems} />
 
       {/* Hero */}
       <HeroSection cohort={cohort} heroContent={heroContent} />
