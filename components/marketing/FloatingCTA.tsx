@@ -116,6 +116,15 @@ export default function FloatingCTA({ cohort }: FloatingCTAProps) {
             display: none !important;
           }
         }
+        @media (max-width: 360px) {
+          .floating-cta-bar {
+            padding: 0.5rem 0.65rem !important;
+          }
+          .floating-cta-btn {
+            padding: 0.45rem 0.65rem !important;
+            font-size: 0.75rem !important;
+          }
+        }
       `}</style>
     </div>
   );

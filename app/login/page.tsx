@@ -196,6 +196,7 @@ function LoginForm() {
 
         {/* Card */}
         <div
+          className="login-card"
           style={{
             background: "rgba(17,24,39,0.95)",
             border: "1px solid rgba(255,255,255,0.08)",
@@ -366,6 +367,15 @@ function LoginForm() {
           </p>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 480px) {
+          .login-card {
+            padding: 1.5rem 1.15rem !important;
+            border-radius: 18px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

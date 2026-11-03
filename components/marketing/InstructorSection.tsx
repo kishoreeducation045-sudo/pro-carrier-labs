@@ -56,6 +56,7 @@ export default function InstructorSection({
   return (
     <section
       id="instructor"
+      className="instructor-section-wrap"
       style={{
         padding: "5rem 1.5rem",
         background: "linear-gradient(180deg, #0d1526 0%, #0a0f1e 100%)",
@@ -133,6 +134,7 @@ export default function InstructorSection({
               {displayStats.map((stat, i) => (
                 <div
                   key={`${stat.label}-${i}`}
+                  className="instructor-stat-box"
                   style={{
                     background: "rgba(17,24,39,0.8)",
                     border: "1px solid rgba(255,255,255,0.06)",
@@ -198,10 +200,21 @@ export default function InstructorSection({
       </div>
 
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
           .instructor-grid {
             grid-template-columns: 1fr !important;
-            gap: 2rem !important;
+            gap: 2.5rem !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .instructor-section-wrap {
+            padding: 3.5rem 1rem !important;
+          }
+          .instructor-stat-box {
+            padding: 0.75rem 0.35rem !important;
+          }
+          .instructor-stat-box p:first-child {
+            font-size: 1.1rem !important;
           }
         }
         @media (max-width: 480px) {

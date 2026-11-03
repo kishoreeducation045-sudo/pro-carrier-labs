@@ -253,7 +253,7 @@ export default function CourseCatalog({ courses = DEFAULT_COURSES }: CourseCatal
           className="course-catalog-container"
           style={{
             display: isHorizontalScroll ? "flex" : "grid",
-            gridTemplateColumns: isHorizontalScroll ? undefined : "repeat(auto-fill, minmax(240px, 1fr))",
+            gridTemplateColumns: isHorizontalScroll ? undefined : "repeat(auto-fill, minmax(min(100%, 250px), 1fr))",
             gap: "1.5rem",
             overflowX: isHorizontalScroll ? "auto" : "visible",
             scrollSnapType: isHorizontalScroll ? "x mandatory" : undefined,
@@ -270,8 +270,8 @@ export default function CourseCatalog({ courses = DEFAULT_COURSES }: CourseCatal
               href={`/workshops/${course.slug}`}
               style={{
                 textDecoration: "none",
-                flex: isHorizontalScroll ? "0 0 290px" : undefined,
-                minWidth: isHorizontalScroll ? 290 : undefined,
+                flex: isHorizontalScroll ? "0 0 min(290px, 82vw)" : undefined,
+                minWidth: isHorizontalScroll ? "min(290px, 82vw)" : undefined,
                 maxWidth: isHorizontalScroll ? 310 : undefined,
                 scrollSnapAlign: isHorizontalScroll ? "start" : undefined,
               }}

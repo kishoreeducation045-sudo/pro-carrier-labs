@@ -100,6 +100,7 @@ export default function BonusStack({
   return (
     <section
       id="bonuses"
+      className="bonus-section-wrap"
       style={{
         padding: "5rem 1.5rem",
         background: "linear-gradient(180deg, #0d1526 0%, #0a0f1e 100%)",
@@ -201,7 +202,7 @@ export default function BonusStack({
                 </p>
               </div>
 
-              <div style={{ flexShrink: 0, textAlign: "right" }}>
+              <div className="bonus-card-price" style={{ flexShrink: 0, textAlign: "right" }}>
                 <p style={{ color: "#64748b", fontSize: "0.75rem", textDecoration: "line-through", margin: "0 0 2px" }}>
                   ₹{bonus.value.toLocaleString("en-IN")}
                 </p>
@@ -249,6 +250,11 @@ export default function BonusStack({
       </div>
 
       <style>{`
+        @media (max-width: 640px) {
+          .bonus-section-wrap {
+            padding: 3.5rem 1rem !important;
+          }
+        }
         @media (max-width: 480px) {
           .bonus-card-item {
             padding: 1rem 0.85rem !important;
@@ -259,6 +265,21 @@ export default function BonusStack({
             gap: 0.5rem !important;
             text-align: center !important;
             padding: 1rem !important;
+          }
+        }
+        @media (max-width: 420px) {
+          .bonus-card-item {
+            flex-wrap: wrap !important;
+            padding: 0.95rem 0.75rem !important;
+          }
+          .bonus-card-price {
+            width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justifyContent: space-between !important;
+            padding-top: 0.5rem !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+            margin-top: 0.25rem !important;
           }
         }
       `}</style>

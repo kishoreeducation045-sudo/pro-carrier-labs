@@ -283,15 +283,17 @@ export default async function WorkshopDetailPage({
       </main>
 
       <style>{`
-        @media (max-width: 868px) {
+        @media (max-width: 1024px) {
+          .course-detail-grid {
+            grid-template-columns: 1fr !important;
+            gap: 2.5rem !important;
+          }
+        }
+        @media (max-width: 640px) {
           .workshop-main-container {
             padding-top: 6.5rem !important;
             padding-left: 1rem !important;
             padding-right: 1rem !important;
-          }
-          .course-detail-grid {
-            grid-template-columns: 1fr !important;
-            gap: 2rem !important;
           }
         }
       `}</style>

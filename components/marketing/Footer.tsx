@@ -17,7 +17,7 @@ export default function Footer() {
       { label: "Privacy Policy", href: "#privacy" },
       { label: "Terms of Service", href: "#terms" },
       { label: "Refund Policy", href: "#refund-policy" },
-      { label: "Contact Us", href: "mailto:neeraj.4all.kr@gmail.com" },
+      { label: "Contact Us", href: "/contact" },
     ],
   };
 
@@ -83,6 +83,14 @@ export default function Footer() {
               >
                 <Mail size={14} color="#1e6fff" /> neeraj.4all.kr@gmail.com
               </a>
+              <Link
+                href="/contact"
+                style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "#60a5fa", fontSize: "0.875rem", textDecoration: "none", fontWeight: 600, transition: "color 0.2s" }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "#93c5fd")}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "#60a5fa")}
+              >
+                💬 Open Support Form →
+              </Link>
             </div>
 
             {/* Social */}

@@ -47,6 +47,7 @@ export default function PainPoints({
 
   return (
     <section
+      className="pain-points-section"
       style={{
         padding: "5rem 1.5rem",
         background: "linear-gradient(180deg, #0a0f1e 0%, #0d1526 100%)",
@@ -104,6 +105,7 @@ export default function PainPoints({
               <button
                 key={i}
                 onClick={() => toggle(i)}
+                className="pain-point-chip"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -118,6 +120,9 @@ export default function PainPoints({
                   cursor: "pointer",
                   transition: "all 0.2s ease",
                   textAlign: "left",
+                  maxWidth: "100%",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal",
                 }}
               >
                 {isSelected && <CheckCircle2 size={16} color="#1e6fff" />}
@@ -164,6 +169,19 @@ export default function PainPoints({
           </div>
         )}
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .pain-points-section {
+            padding: 3.5rem 1rem !important;
+          }
+          .pain-point-chip {
+            padding: 0.6rem 0.95rem !important;
+            font-size: 0.875rem !important;
+            border-radius: 12px !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

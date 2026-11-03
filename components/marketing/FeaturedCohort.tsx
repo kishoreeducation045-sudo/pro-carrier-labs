@@ -252,6 +252,22 @@ export default function FeaturedCohort({ cohort }: FeaturedCohortProps) {
             gap: 1.25rem !important;
           }
         }
+        @media (max-width: 380px) {
+          .countdown-wrap {
+            gap: 0.25rem !important;
+          }
+          .countdown-colon {
+            display: none !important;
+          }
+          .countdown-digit-box {
+            min-width: 44px !important;
+            padding: 0.5rem 0.35rem !important;
+            font-size: 1.15rem !important;
+          }
+          .featured-cohort-card {
+            padding: 1.15rem 0.75rem !important;
+          }
+        }
       `}</style>
     </section>
   );

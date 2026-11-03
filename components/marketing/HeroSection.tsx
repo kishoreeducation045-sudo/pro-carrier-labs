@@ -429,30 +429,46 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
       </div>
 
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
           .hero-section-container {
-            padding-top: 115px !important;
-            padding-bottom: 50px !important;
+            padding-top: 125px !important;
+            padding-bottom: 60px !important;
           }
           .hero-grid {
             grid-template-columns: 1fr !important;
-            gap: 2.25rem !important;
+            gap: 2.5rem !important;
           }
           .hero-badge-students {
-            left: 12px !important;
-            bottom: 16px !important;
-            padding: 0.75rem 1rem !important;
+            left: 14px !important;
+            bottom: 20px !important;
+            padding: 0.85rem 1.15rem !important;
           }
           .hero-badge-rating {
-            right: 12px !important;
-            top: 16px !important;
-            padding: 0.65rem 1rem !important;
+            right: 14px !important;
+            top: 20px !important;
+            padding: 0.75rem 1.15rem !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .hero-section-container {
+            padding-top: 110px !important;
+            padding-bottom: 40px !important;
+          }
+          .hero-badge-students {
+            left: 10px !important;
+            bottom: 14px !important;
+            padding: 0.65rem 0.85rem !important;
+          }
+          .hero-badge-rating {
+            right: 10px !important;
+            top: 14px !important;
+            padding: 0.55rem 0.85rem !important;
           }
         }
         @media (max-width: 480px) {
           .hero-session-card {
             padding: 0.875rem 0.5rem !important;
-            gap: 0.5rem !important;
+            gap: 0.4rem !important;
           }
           .hero-cta-group {
             flex-direction: column !important;
@@ -461,6 +477,13 @@ export default function HeroSection({ cohort, heroContent }: HeroSectionProps) {
           .hero-cta-btn {
             width: 100% !important;
             justify-content: center !important;
+          }
+        }
+        @media (max-width: 360px) {
+          .hero-session-card {
+            grid-template-columns: 1fr !important;
+            text-align: left !important;
+            gap: 0.6rem !important;
           }
         }
       `}</style>

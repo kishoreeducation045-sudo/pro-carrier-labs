@@ -51,9 +51,10 @@ export default function Navbar({ tickerItems }: NavbarProps = {}) {
 
   const navLinks = [
     { label: "Workshops", href: "/workshops" },
-    { label: "About", href: "#instructor" },
-    { label: "Testimonials", href: "#testimonials" },
-    { label: "FAQ", href: "#faq" },
+    { label: "About", href: "/#instructor" },
+    { label: "Testimonials", href: "/#testimonials" },
+    { label: "FAQ", href: "/#faq" },
+    { label: "Contact", href: "/contact" },
   ];
 
   const isAdmin =
@@ -147,6 +148,7 @@ export default function Navbar({ tickerItems }: NavbarProps = {}) {
               <Zap size={18} color="#fff" fill="#fff" />
             </div>
             <span
+              className="navbar-logo-text"
               style={{
                 fontWeight: 800,
                 fontSize: "1.0625rem",
@@ -271,6 +273,7 @@ export default function Navbar({ tickerItems }: NavbarProps = {}) {
                 </Link>
                 <Link
                   href="/workshops"
+                  className="navbar-enroll-btn"
                   style={{
                     background: "#1e6fff",
                     color: "#fff",
@@ -428,6 +431,18 @@ export default function Navbar({ tickerItems }: NavbarProps = {}) {
           </div>
         )}
       </nav>
+
+      <style>{`
+        @media (max-width: 380px) {
+          .navbar-logo-text {
+            font-size: 0.9375rem !important;
+          }
+          .navbar-enroll-btn {
+            padding: 0.4rem 0.75rem !important;
+            font-size: 0.75rem !important;
+          }
+        }
+      `}</style>
     </header>
   );
 }

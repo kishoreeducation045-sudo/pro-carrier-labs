@@ -79,7 +79,7 @@ export default async function WorkshopsCatalogPage() {
         </div>
 
         {/* Workshops Grid */}
-        <div className="workshops-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "2rem" }}>
+        <div className="workshops-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))", gap: "2rem" }}>
           {workshops.map((workshop) => {
             const features = Array.isArray(workshop.features) ? workshop.features : [];
             const originalPrice = workshop.original_price_inr || 2999;
