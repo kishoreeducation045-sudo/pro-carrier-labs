@@ -191,16 +191,12 @@ export default function Footer() {
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "1rem",
+            justifyContent: "center",
+            textAlign: "center",
           }}
         >
           <p style={{ color: "#475569", fontSize: "0.8125rem", margin: 0 }}>
             © {year} ProCareerLabs. All rights reserved.
-          </p>
-          <p style={{ color: "#475569", fontSize: "0.8125rem", margin: 0 }}>
-            Made with ❤️ for Indian professionals
           </p>
         </div>
       </div>
